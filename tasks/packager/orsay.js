@@ -87,7 +87,7 @@ module.exports = {
             config.resWidth = parseInt(tmp[0], 10);
             config.resHeight = parseInt(tmp[1], 10);
 
-            cleanDest() || (errorCallback && errorCallback());
+            //cleanDest() || (errorCallback && errorCallback());
             copySrcToDest() || (errorCallback && errorCallback());
             buildPlatformAdditions() || (errorCallback && errorCallback());
 
@@ -95,10 +95,10 @@ module.exports = {
             successCallback && successCallback();
         });
 
-        function cleanDest() {
-            shelljs.rm('-rf', dest);
-            return true;
-        }
+        // function cleanDest() {
+        //     shelljs.rm('-rf', dest);
+        //     return true;
+        // }
         function copySrcToDest() {
             var tmp = dest.split(path.sep);
             //console.log(tmp);

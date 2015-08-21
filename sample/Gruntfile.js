@@ -6,7 +6,7 @@ module.exports = function(grunt) {
             },
             src: ['www/**/*.js']
         },
-        clean: ['platforms/sectv-orsay','platforms/sectv-tizen'],
+        clean: ['platforms/sectv-orsay/www/**/*','platforms/sectv-tizen/www/**/*'],
         'sectv-build': {
             'orsay': {
                 dest: 'platforms/sectv-orsay/www',
