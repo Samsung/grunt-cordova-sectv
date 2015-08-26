@@ -5,6 +5,7 @@ var utils = require('../lib/utils');
 var shelljs = require('shelljs');
 var mustache = require('mustache');
 var grunt = require('grunt');
+var jszip = require('jszip');
 
 function semVer2OrsayVer(semver) {
     var LEN_MINOR = 2;
@@ -132,5 +133,16 @@ module.exports = {
     },
     package: function (successCallback, errorCallback, wwwSrc, dest, platformRepos) {
         // TODO: zip the built application to make package
+        
+        shelljs.cp('-rf', './www/*', dest);
+        //make zip file
+        // var zip = new JSZip();
+        // zip.folder("packages");
+
+        // platformRepos = path.resolve(platformRepos);
+        // shelljs.cp('-rf', path.join(platformRepos, 'www', '*'), dest);
+
+        // var result = zip.generate({type : "blob"});
+        // saveAs(result, cordovaConf.name+".zip");
     }
 };
