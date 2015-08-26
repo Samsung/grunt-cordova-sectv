@@ -119,22 +119,34 @@ module.exports = {
             }
             return true;
         }
+
         function buildPlatformAdditions() {
             shelljs.cp('-rf', path.join(platformRepos, 'www', '*'), dest);
 
             // replace config.xml template with actual configuration
-            var tmplConfigXml = fs.readFileSync(path.join(dest,'config.xml'), {encoding: 'utf8'});
-            var rendered = mustache.render(tmplConfigXml, config);
+            replaceTemplate('config.xml');
+            
+            // replace widget.info template with actual configuration
+            replaceTemplate('widget.info');
+
+            return true;
+        }
+
+        function replaceTemplate(filenamme) {
+            // replace config.xml template with actual configuration
+            var tmplFile = fs.readFileSync(path.join(dest, filenamme), {encoding: 'utf8'});
+            var rendered = mustache.render(tmplFile, config);
+
             //console.log(rendered);
-            fs.writeFileSync(path.join(dest,'config.xml.tmp'), rendered, {encoding: 'utf8'});
-            shelljs.mv('-f', path.join(dest,'config.xml.tmp'), path.join(dest,'config.xml'));
+            fs.writeFileSync(path.join(dest, filenamme + '.tmp'), rendered, {encoding: 'utf8'});
+            shelljs.mv('-f', path.join(dest, filenamme + '.tmp'), path.join(dest, filenamme));
             return true;
         }
     },
     package: function (successCallback, errorCallback, wwwSrc, dest, platformRepos) {
         // TODO: zip the built application to make package
         
-        shelljs.cp('-rf', './www/*', dest);
+        //shelljs.cp('-rf', './www/*', dest);
         //make zip file
         // var zip = new JSZip();
         // zip.folder("packages");
