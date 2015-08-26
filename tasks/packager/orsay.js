@@ -129,17 +129,29 @@ module.exports = {
             // replace widget.info template with actual configuration
             replaceTemplate('widget.info');
 
+            // replace .project template with actual configuration
+            // .project is hidden file in linux
+            replaceTemplate('project', true);
+
             return true;
         }
 
-        function replaceTemplate(filenamme) {
+        function replaceTemplate(filename, isHidden) {
             // replace config.xml template with actual configuration
-            var tmplFile = fs.readFileSync(path.join(dest, filenamme), {encoding: 'utf8'});
+            var tmplFile = fs.readFileSync(path.join(dest, filename), {encoding: 'utf8'});
             var rendered = mustache.render(tmplFile, config);
 
             //console.log(rendered);
-            fs.writeFileSync(path.join(dest, filenamme + '.tmp'), rendered, {encoding: 'utf8'});
-            shelljs.mv('-f', path.join(dest, filenamme + '.tmp'), path.join(dest, filenamme));
+            fs.writeFileSync(path.join(dest, filename + '.tmp'), rendered, {encoding: 'utf8'});
+            
+            //hidden file.......
+            if(isHidden){
+                shelljs.mv('-f', path.join(dest, filename + '.tmp'), path.join(dest, '.'+filename));
+                shelljs.rm('-f', path.join(dest, filename));
+            }else{
+                shelljs.mv('-f', path.join(dest, filename + '.tmp'), path.join(dest, filename));
+            }
+
             return true;
         }
     },
