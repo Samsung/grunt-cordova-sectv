@@ -8,8 +8,6 @@ var grunt = require('grunt');
 
 module.exports = {
     build: function (successCallback, errorCallback, wwwSrc, dest, platformRepos) {
-        console.log("Build Tizen: " + JSON.stringify(Array.prototype.slice.call(arguments, 0)));
-
         wwwSrc = path.resolve(wwwSrc);
         dest = path.resolve(dest);
         platformRepos = path.resolve(platformRepos);
@@ -20,23 +18,6 @@ module.exports = {
             name: 'name',
             message: 'What\'s the application\'s name?',
             default: cordovaConf.name
-        },{
-            type: 'list',
-            name: 'resolution',
-            message: 'Which resolution does your application developed for?',
-            default: '1920x1080',
-            choices: [
-                '960x540',
-                '1280x720',
-                '1920x1080'
-            ]
-        }, {
-            type: 'list',
-            name: 'category',
-            message: 'What\'s the application\'s category?',
-            choices: [
-                'VOD', 'sports', 'game', 'lifestyle', 'information', 'education'
-            ]
         }, {
             type: 'input',
             name: 'version',
@@ -50,7 +31,7 @@ module.exports = {
             type: 'input',
             name: 'description',
             message: 'Application Description',
-            default: "Describe yourself"
+            default: 'Web application for Samsung Tizen TV'
         }];
 
         var config = {};

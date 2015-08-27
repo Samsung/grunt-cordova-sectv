@@ -24,10 +24,7 @@ module.exports = {
         wwwSrc = path.resolve(wwwSrc);
         dest = path.resolve(dest);
         platformRepos = path.resolve(platformRepos);
-        //console.log("wwwSrc: " + wwwSrc);
-        //console.log("dest: " + dest);
-        //console.log("platformRepos: " + platformRepos);
-
+        
         var cordovaConf = utils.getCordovaConfig();
         var choice = [{
             type: 'input',
@@ -63,7 +60,7 @@ module.exports = {
             type: 'input',
             name: 'description',
             message: 'Application Description',
-            default: ""
+            default: 'Web application for Samsung Legacy Smart TV platform'
         }, {
             type: 'input',
             name: 'authorName',
