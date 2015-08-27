@@ -8,6 +8,7 @@ var grunt = require('grunt');
 
 module.exports = {
     build: function (successCallback, errorCallback, wwwSrc, dest, platformRepos) {
+        console.log("\nStart building Samsung Tizen Platform......");
         wwwSrc = path.resolve(wwwSrc);
         dest = path.resolve(dest);
         platformRepos = path.resolve(platformRepos);
@@ -20,13 +21,20 @@ module.exports = {
             default: cordovaConf.name
         }, {
             type: 'input',
+            name: 'id',
+            message: 'Application Id (Valid RegExp: [0-9a-zA-Z]{10})',
+            default: 'puttizenid',
+            validate: function(input) {
+                return /[0-9a-zA-Z]{10}/.test(input) ? true : "invalid id string for tizen platform";
+            }
+        }, {
+            type: 'input',
             name: 'version',
-            message: 'Application Version(Valid RegExp: [0-9a-zA-Z]{10}[.][0-9a-zA-Z]{1,52})',
-            default: cordovaConf.version
-            // ,
-            // validate: function(input) {
-            //     return /^[0-9]+\.[0-9]+$/.test(input) ? true : "invalid version string for tizen platform";
-            // }
+            message: 'Application Version(Valid RegExp: [0-9][.][0-9][.][0-9])',
+            default: cordovaConf.version,
+            validate: function(input) {
+                return /[0-9][.][0-9][.][0-9]/.test(input) ? true : "invalid version string for tizen platform";
+            }
         }, {
             type: 'input',
             name: 'description',
@@ -37,15 +45,11 @@ module.exports = {
         var config = {};
         inquirer.prompt(choice, function (answers) {
             config = answers;
-            var tmp = config.resolution.split('x');
-       		// resolution
-            config.resWidth = parseInt(tmp[0], 10);
-            config.resHeight = parseInt(tmp[1], 10);
 
             copySrcToDest() || (errorCallback && errorCallback());
             buildPlatformAdditions() || (errorCallback && errorCallback());
 
-            grunt.log.write('Built at ' + dest);
+            grunt.log.write('\n\nBuilt at ' + dest);
             successCallback && successCallback();
         });
 
@@ -97,6 +101,5 @@ module.exports = {
     },
     package: function (successCallback, errorCallback, wwwSrc, dest, platformRepos) {
         console.log("Package Tizen: " + JSON.stringify(Array.prototype.slice.call(arguments, 0)));
-
     }
 };

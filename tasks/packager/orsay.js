@@ -21,6 +21,7 @@ function semVer2OrsayVer(semver) {
 
 module.exports = {
     build: function (successCallback, errorCallback, wwwSrc, dest, platformRepos) {
+        console.log("\nStart building Samsung Smart TV Legacy Platform......");
         wwwSrc = path.resolve(wwwSrc);
         dest = path.resolve(dest);
         platformRepos = path.resolve(platformRepos);
@@ -34,7 +35,7 @@ module.exports = {
         }, {
             type: 'list',
             name: 'resolution',
-            message: 'Which resolution does your application deveoped for?',
+            message: 'Which resolution does your application developed for?',
             default: '960x540',
             choices: [
                 '960x540',
