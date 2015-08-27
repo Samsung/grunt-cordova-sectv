@@ -80,15 +80,37 @@ module.exports = {
             shelljs.cp('-rf', path.join(wwwSrc, '*'), dest);
             return true;
         }
+
         function buildPlatformAdditions() {
             shelljs.cp('-rf', path.join(platformRepos, 'www', '*'), dest);
 
             // replace config.xml template with actual configuration
-            var tmplConfigXml = fs.readFileSync(path.join(dest,'config.xml'), {encoding: 'utf8'});
-            var rendered = mustache.render(tmplConfigXml, config);
+            replaceTemplate('config.xml');
+
+            // replace .project template with actual configuration
+            // .project is hidden file in linux
+            replaceTemplate('project', true);
+            replaceTemplate('tproject', true);
+
+            return true;
+        }
+
+        function replaceTemplate(filename, isHidden) {
+            // replace config.xml template with actual configuration
+            var tmplFile = fs.readFileSync(path.join(dest, filename), {encoding: 'utf8'});
+            var rendered = mustache.render(tmplFile, config);
+
             //console.log(rendered);
-            fs.writeFileSync(path.join(dest,'config.xml.tmp'), rendered, {encoding: 'utf8'});
-            shelljs.mv('-f', path.join(dest,'config.xml.tmp'), path.join(dest,'config.xml'));
+            fs.writeFileSync(path.join(dest, filename + '.tmp'), rendered, {encoding: 'utf8'});
+            
+            //hidden file.......
+            if(isHidden){
+                shelljs.mv('-f', path.join(dest, filename + '.tmp'), path.join(dest, '.'+filename));
+                shelljs.rm('-f', path.join(dest, filename));
+            }else{
+                shelljs.mv('-f', path.join(dest, filename + '.tmp'), path.join(dest, filename));
+            }
+
             return true;
         }
     },
