@@ -5,6 +5,7 @@ var utils = require('../lib/utils');
 var shelljs = require('shelljs');
 var mustache = require('mustache');
 var grunt = require('grunt');
+var jszip = require('jszip');
 
 module.exports = {
     build: function (successCallback, errorCallback, wwwSrc, dest, platformRepos) {
@@ -99,7 +100,8 @@ module.exports = {
             return true;
         }
     },
-    package: function (successCallback, errorCallback, wwwSrc, dest, platformRepos) {
-        console.log("Package Tizen: " + JSON.stringify(Array.prototype.slice.call(arguments, 0)));
+    package: function (successCallback, errorCallback, build, dest) {
+        // console.log("\nPackage Tizen: " + JSON.stringify(Array.prototype.slice.call(arguments, 0)));
+        console.log("\nStart packaging Samsung Tizen TV Platform......");
     }
 };

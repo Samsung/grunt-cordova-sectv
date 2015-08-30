@@ -153,18 +153,31 @@ module.exports = {
             return true;
         }
     },
-    package: function (successCallback, errorCallback, wwwSrc, dest, platformRepos) {
+    package: function (successCallback, errorCallback, build, dest) {
+        // console.log("\nPackage Orsay: " + JSON.stringify(Array.prototype.slice.call(arguments, 0)));
+        console.log("\nStart packaging Samsung Smart TV Legacy Platform......");
         // TODO: zip the built application to make package
-        
-        //shelljs.cp('-rf', './www/*', dest);
+        build = path.resolve(build);
+        dest = path.resolve(dest);
+
+        // var cordovaConf = utils.getCordovaConfig(path.join(build, 'config.xml'));
+        // console.log("cordovaConf : "+ cordovaConf.name);
         //make zip file
-        // var zip = new JSZip();
-        // zip.folder("packages");
+        var zipFile = new jszip();
+        zipFile.folder(path.join(build, '*'));
 
-        // platformRepos = path.resolve(platformRepos);
-        // shelljs.cp('-rf', path.join(platformRepos, 'www', '*'), dest);
+        // var packageFile = zipFile.generate({type : "nodebuffer"});
+        // fs.writeFile(cordovaConf.name+".zip", packageFile, function(err){
+        //     if(err) throw err;
+        // });
 
-        // var result = zip.generate({type : "blob"});
-        // saveAs(result, cordovaConf.name+".zip");
+        // shelljs.cp('-rf', cordovaConf.name + '.zip', dest);
+
+        var packageFile = zipFile.generate({type : "nodebuffer"});
+        fs.writeFile("package.zip", packageFile, function(err){
+            if(err) throw err;
+        });
+
+        shelljs.cp('-rf', 'package.zip', dest);
     }
 };

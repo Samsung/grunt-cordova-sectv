@@ -6,7 +6,7 @@ module.exports = function(grunt) {
             },
             src: ['www/**/*.js']
         },
-        clean: ['platforms/sectv-orsay/www/**/*','platforms/sectv-tizen/www/**/*'],
+        clean: ['platforms/sectv-orsay/www/**/*' , 'platforms/sectv-orsay/build/*' , 'platforms/sectv-tizen/www/**/*' , 'platforms/sectv-tizen/build/*'],
         'sectv-build': {
             'orsay': {
                 dest: 'platforms/sectv-orsay/www',
@@ -25,9 +25,11 @@ module.exports = function(grunt) {
         },
         'sectv-package': {
             'orsay': {
+                build: 'platforms/sectv-orsay/www',
                 dest: 'platforms/sectv-orsay/build'
             },
             'tizen': {
+                build: 'platforms/sectv-tizen/www',
                 dest: 'platforms/sectv-tizen/build'
             }
         }

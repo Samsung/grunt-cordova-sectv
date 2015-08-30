@@ -6,8 +6,12 @@ function trim (str) {
 
 module.exports = {
     trim: trim,
-    getCordovaConfig: function() {
-        var confXml = fs.readFileSync('./config.xml');
+    getCordovaConfig: function(filepath) {
+        if(!filepath){
+            filepath = './config.xml';
+        }
+        
+        var confXml = fs.readFileSync(filepath);
         var conf = null;
         xml2js.parseString(confXml, {
             async: false
