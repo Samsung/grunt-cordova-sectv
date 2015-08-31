@@ -7,10 +7,16 @@ It supports several functions like build, package, emulate project of each platf
 
 # Installation
 ```shell
-$ npm install ../grunt-cordova-sectv
+$ npm install {{Local or git path to this project}}
 ```
 
 # How to use
+In the 2014's TV
+1. Make project using cordova
+2. Copy the grunt-cordova-sectv/sample/* to the root directory of your cordova project
+3. `npm install`
+4. `npm install {{Local or git path to this project}}`
+5. `grunt`
 
 # How to Build
 
