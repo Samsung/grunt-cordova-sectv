@@ -30,10 +30,10 @@ module.exports = {
         }, {
             type: 'input',
             name: 'version',
-            message: 'Application Version(Valid RegExp: [0-9][.][0-9][.][0-9])',
+            message: 'Application Version(Valid RegExp: \d.\d.\d)',
             default: cordovaConf.version,
             validate: function(input) {
-                return /[0-9][.][0-9][.][0-9]/.test(input) ? true : "invalid version string for tizen platform";
+                return /\d.\d.\d/.test(input) ? true : "invalid version string for tizen platform";
             }
         }, {
             type: 'input',
