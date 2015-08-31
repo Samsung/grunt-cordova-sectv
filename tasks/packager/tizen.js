@@ -5,7 +5,6 @@ var utils = require('../lib/utils');
 var shelljs = require('shelljs');
 var mustache = require('mustache');
 var grunt = require('grunt');
-var jszip = require('jszip');
 
 module.exports = {
     build: function (successCallback, errorCallback, wwwSrc, dest, platformRepos) {

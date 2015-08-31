@@ -5,7 +5,7 @@ var utils = require('../lib/utils');
 var shelljs = require('shelljs');
 var mustache = require('mustache');
 var grunt = require('grunt');
-var jszip = require('jszip');
+var zipdir = require('zip-dir');
 
 function semVer2OrsayVer(semver) {
     var LEN_MINOR = 2;
@@ -160,24 +160,8 @@ module.exports = {
         build = path.resolve(build);
         dest = path.resolve(dest);
 
-        // var cordovaConf = utils.getCordovaConfig(path.join(build, 'config.xml'));
-        // console.log("cordovaConf : "+ cordovaConf.name);
-        //make zip file
-        var zipFile = new jszip();
-        zipFile.folder(path.join(build, '*'));
+        zipdir(build, {saveTo: path.join(dest, "package.zip")},function(err, buffer){
 
-        // var packageFile = zipFile.generate({type : "nodebuffer"});
-        // fs.writeFile(cordovaConf.name+".zip", packageFile, function(err){
-        //     if(err) throw err;
-        // });
-
-        // shelljs.cp('-rf', cordovaConf.name + '.zip', dest);
-
-        var packageFile = zipFile.generate({type : "nodebuffer"});
-        fs.writeFile("package.zip", packageFile, function(err){
-            if(err) throw err;
         });
-
-        shelljs.cp('-rf', 'package.zip', dest);
     }
 };
