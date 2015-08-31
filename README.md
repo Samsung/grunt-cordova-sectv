@@ -16,7 +16,7 @@ $ npm install {{Local or git path to this project}}
 3. `npm install`
 4. `npm install {{Local or git path to this project}}`
 
-# How to Build and Package at the time
+# How to Build and Package at once
 1. `grunt` at the root directory of your cordova project
 
 # How to Build
