@@ -12,6 +12,7 @@ module.exports = function(grunt) {
                 dest: 'platforms/sectv-orsay/www',
                 platformRepos: '../cordova-sectv-orsay',
                 scripts: {
+                    'cordova.js': '../cordova-js/pkg/cordova.sectv-orsay.js',
                     'toast.js': '../cordova-plugin-toast/platform_www/sectv-orsay/toast.js'
                 }
             },
@@ -19,6 +20,7 @@ module.exports = function(grunt) {
                 dest: 'platforms/sectv-tizen/www',
                 platformRepos: '../cordova-sectv-tizen',
                 scripts: {
+                    'cordova.js': '../cordova-js/pkg/cordova.sectv-tizen.js',
                     'toast.js': '../cordova-plugin-toast/platform_www/sectv-tizen/toast.js'
                 }
             }

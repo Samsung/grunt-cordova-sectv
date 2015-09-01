@@ -20,12 +20,15 @@ function semVer2OrsayVer(semver) {
 }
 
 module.exports = {
-    build: function (successCallback, errorCallback, wwwSrc, dest, platformRepos) {
+    build: function (successCallback, errorCallback, wwwSrc, dest, platformRepos, scripts) {
         console.log("\nStart building Samsung Smart TV Legacy Platform......");
         wwwSrc = path.resolve(wwwSrc);
         dest = path.resolve(dest);
         platformRepos = path.resolve(platformRepos);
         
+        var cordovaSrc = path.resolve(scripts['cordova.js']);
+        var toastSrc = path.resolve(scripts['toast.js']);
+
         var cordovaConf = utils.getCordovaConfig();
         var choice = [{
             type: 'input',
@@ -86,7 +89,6 @@ module.exports = {
             config.resWidth = parseInt(tmp[0], 10);
             config.resHeight = parseInt(tmp[1], 10);
 
-            //cleanDest() || (errorCallback && errorCallback());
             copySrcToDest() || (errorCallback && errorCallback());
             buildPlatformAdditions() || (errorCallback && errorCallback());
 
@@ -107,6 +109,16 @@ module.exports = {
                 //console.log("curPath: " + curPath);
                 !fs.existsSync(curPath) && fs.mkdirSync(curPath);
             }
+
+            // // cordova.js
+            // shelljs.cp('-rf', cordovaSrc, dest);
+
+            //toast.js
+            fs.exists(toastSrc, function(exists){
+                if(exists) shelljs.cp('-rf', toastSrc, dest);
+                else console.log('\n\ncan\'t find toast.js at\n'+toastSrc);
+            }); 
+
             shelljs.cp('-rf', path.join(wwwSrc, '*'), dest);
             if(cordovaConf.contentSrc !== "index.html") {
                 if(fs.existsSync(path.join(dest, "index.html"))) {

@@ -7,11 +7,14 @@ var mustache = require('mustache');
 var grunt = require('grunt');
 
 module.exports = {
-    build: function (successCallback, errorCallback, wwwSrc, dest, platformRepos) {
+    build: function (successCallback, errorCallback, wwwSrc, dest, platformRepos, scripts) {
         console.log("\nStart building Samsung Tizen Platform......");
         wwwSrc = path.resolve(wwwSrc);
         dest = path.resolve(dest);
         platformRepos = path.resolve(platformRepos);
+
+        var cordovaSrc = path.resolve(scripts['cordova.js']);
+        var toastSrc = path.resolve(scripts['toast.js']);
 
         var cordovaConf = utils.getCordovaConfig();
         var choice = [{
@@ -62,6 +65,13 @@ module.exports = {
                 //console.log("curPath: " + curPath);
                 !fs.existsSync(curPath) && fs.mkdirSync(curPath);
             }
+
+            //toast.js
+            fs.exists(toastSrc, function(exists){
+                if(exists) shelljs.cp('-rf', toastSrc, dest);
+                else console.log('\n\ncan\'t find toast.js at\n'+toastSrc);
+            });
+
             shelljs.cp('-rf', path.join(wwwSrc, '*'), dest);
             return true;
         }
