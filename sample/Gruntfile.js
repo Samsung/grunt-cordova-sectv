@@ -30,7 +30,8 @@ module.exports = function(grunt) {
             },
             'tizen': {
                 build: 'platforms/sectv-tizen/www',
-                dest: 'platforms/sectv-tizen/build'
+                dest: 'platforms/sectv-tizen/build',
+                sdbSrc: 'c:/tizen-tv-sdk/tools'
             }
         }
     });

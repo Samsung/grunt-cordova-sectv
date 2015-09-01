@@ -99,8 +99,9 @@ module.exports = {
             return true;
         }
     },
-    package: function (successCallback, errorCallback, build, dest) {
-        // console.log("\nPackage Tizen: " + JSON.stringify(Array.prototype.slice.call(arguments, 0)));
+    package: function (successCallback, errorCallback, build, dest, sdbSrc) {
         console.log("\nStart packaging Samsung Tizen TV Platform......");
+        dest = path.resolve(dest);
+        shelljs.exec(path.join(sdbSrc, 'sdb version'));
     }
 };
