@@ -3,15 +3,11 @@ var path = require('path');
 module.exports = function(grunt) {
     grunt.registerMultiTask('sectv-build', 'build sectv apps', function() {
         var platformName = this.target;
+
+        // path
         var wwwSrc = path.normalize(this.data.src || ('./www'));
-
-        // dest
         var dest = this.data.dest || path.join('platforms', platformName, 'www');
-
-        // platformRepos
         var platformRepos = this.data.platformRepos || ('../cordova-sectv-' + platformName);
-
-        // scripts
         var scripts = this.data.scripts;
 
         var packager = require('./packager/'+platformName);

@@ -172,8 +172,11 @@ module.exports = {
         build = path.resolve(build);
         dest = path.resolve(dest);
 
-        fs.mkdir(dest, null, function(){
-           zipdir(build, {saveTo: path.join(dest, "package.zip")},function(err, buffer){});
+        fs.mkdir(dest, function(){
+            zipdir(build, {saveTo: path.join(dest, "package.zip")}, function(err, buffer){
+                console.log('Packaged at ' + dest);
+                successCallback && successCallback();        
+            });
         });
     }
 };

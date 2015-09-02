@@ -5,6 +5,7 @@ var utils = require('../lib/utils');
 var shelljs = require('shelljs');
 var mustache = require('mustache');
 var grunt = require('grunt');
+var zipdir = require('zip-dir');
 
 module.exports = {
     build: function (successCallback, errorCallback, wwwSrc, dest, platformRepos, scripts) {
@@ -52,7 +53,7 @@ module.exports = {
             copySrcToDest() || (errorCallback && errorCallback());
             buildPlatformAdditions() || (errorCallback && errorCallback());
 
-            grunt.log.write('\n\nBuilt at ' + dest);
+            console.log('\n\nBuilt at ' + dest);
             successCallback && successCallback();
         });
 
@@ -109,9 +110,16 @@ module.exports = {
             return true;
         }
     },
-    package: function (successCallback, errorCallback, build, dest, sdbSrc) {
+    package: function (successCallback, errorCallback, build, dest) {
         console.log("\nStart packaging Samsung Tizen TV Platform......");
+        build = path.resolve(build);
         dest = path.resolve(dest);
-        shelljs.exec(path.join(sdbSrc, 'sdb version'));
+
+        fs.mkdir(dest, function(){
+            zipdir(build, {saveTo: path.join(dest, "package.wgt")}, function(err, buffer){
+                console.log('Packaged at ' + dest);
+                successCallback && successCallback();        
+            });
+        });
     }
 };
