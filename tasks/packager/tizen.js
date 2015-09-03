@@ -4,7 +4,7 @@ var inquirer = require('inquirer');
 var utils = require('../lib/utils');
 var shelljs = require('shelljs');
 var mustache = require('mustache');
-var grunt = require('grunt');
+// var grunt = require('grunt');
 var zipdir = require('zip-dir');
 
 module.exports = {
@@ -89,7 +89,7 @@ module.exports = {
                 // copy toast.js
                 fs.exists(toastSrc, function(exists){
                     if(exists) shelljs.cp('-rf', toastSrc, dest);
-                    else grunt.log.error('\n\ncan\'t find toast.js at\n'+toastSrc);
+                    else console.log('\n\ncan\'t find toast.js at\n'+toastSrc);
                 }); 
 
                 shelljs.cp('-rf', path.join(wwwSrc, '*'), dest);
