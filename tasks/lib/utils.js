@@ -1,7 +1,9 @@
+'use strict';
+
 var fs = require('fs');
 var xml2js = require('xml2js');
 function trim (str) {
-    return (str + "").replace(/^\s+|\s+$/g, '');
+    return (str + '').replace(/^\s+|\s+$/g, '');
 }
 
 module.exports = {
@@ -25,9 +27,9 @@ module.exports = {
             version: conf.widget.$.version,
             name: conf.widget.name[0],
             description: conf.widget.description,
-            authorName: trim(conf.widget.author[0]._ || ""),
-            authorEmail: trim(conf.widget.author[0].$.email || ""),
-            authorHref: trim(conf.widget.author[0].$.href || "")
+            authorName: trim(conf.widget.author[0]._ || ''),
+            authorEmail: trim(conf.widget.author[0].$.email || ''),
+            authorHref: trim(conf.widget.author[0].$.href || '')
         };
     }
 };

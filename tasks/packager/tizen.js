@@ -1,3 +1,5 @@
+'use strict';
+
 var fs = require('fs');
 var path = require('path');
 var inquirer = require('inquirer');
@@ -9,7 +11,7 @@ var zipdir = require('zip-dir');
 
 module.exports = {
     build: function (successCallback, errorCallback, wwwSrc, dest, platformRepos, scripts) {
-        console.log("\nStart building Samsung Tizen Platform......");
+        console.log('\nStart building Samsung Tizen Platform......');
 
         // file path
         wwwSrc = path.resolve(wwwSrc);
@@ -44,7 +46,7 @@ module.exports = {
                     message: 'Application Id (Valid RegExp: [0-9a-zA-Z]{10})',
                     default: 'puttizenid',
                     validate: function(input) {
-                        return /[0-9a-zA-Z]{10}/.test(input) ? true : "invalid id string for tizen platform";
+                        return /[0-9a-zA-Z]{10}/.test(input) ? true : 'invalid id string for tizen platform';
                     }
                 }, {
                     type: 'input',
@@ -52,7 +54,7 @@ module.exports = {
                     message: 'Application Version(Valid RegExp: \d.\d.\d)',
                     default: cordovaConf.version,
                     validate: function(input) {
-                        return /\d.\d.\d/.test(input) ? true : "invalid version string for tizen platform";
+                        return /\d.\d.\d/.test(input) ? true : 'invalid version string for tizen platform';
                     }
                 }, {
                     type: 'input',
@@ -88,8 +90,11 @@ module.exports = {
 
                 // copy toast.js
                 fs.exists(toastSrc, function(exists){
-                    if(exists) shelljs.cp('-rf', toastSrc, dest);
-                    else console.log('\n\ncan\'t find toast.js at\n'+toastSrc);
+                    if(exists) {
+                        shelljs.cp('-rf', toastSrc, dest);
+                    }else{
+                        console.log('\n\ncan\'t find toast.js at\n'+toastSrc);
+                    }
                 }); 
 
                 shelljs.cp('-rf', path.join(wwwSrc, '*'), dest);
@@ -160,13 +165,13 @@ module.exports = {
         }
     },
     package: function (successCallback, errorCallback, build, dest){
-        console.log("\nStart packaging Samsung Tizen TV Platform......");
+        console.log('\nStart packaging Samsung Tizen TV Platform......');
 
         build = path.resolve(build);
         dest = path.resolve(dest);
 
         fs.mkdir(dest, function(){
-            zipdir(build, {saveTo: path.join(dest, "package.wgt")}, function(err, buffer){
+            zipdir(build, {saveTo: path.join(dest, 'package.wgt')}, function(){
                 console.log('Packaged at ' + dest);
                 successCallback && successCallback();        
             });

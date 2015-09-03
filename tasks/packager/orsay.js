@@ -1,3 +1,5 @@
+'use strict';
+
 var fs = require('fs');
 var path = require('path');
 var inquirer = require('inquirer');
@@ -9,7 +11,7 @@ var zipdir = require('zip-dir');
 
 module.exports = {
     build: function (successCallback, errorCallback, wwwSrc, dest, platformRepos, scripts) {
-        console.log("\nStart Building Legacy Samsung Smart TV Platform......");
+        console.log('\nStart Building Legacy Samsung Smart TV Platform......');
 
         // file path
         wwwSrc = path.resolve(wwwSrc);
@@ -61,7 +63,7 @@ module.exports = {
                     message: 'Application Version(Valid RegExp: ^[0-9]+\.[0-9]+$)',
                     default: orsayUtil.semVer2OrsayVer(cordovaConf.version),
                     validate: function(input) {
-                        return /^[0-9]+\.[0-9]+$/.test(input) ? true : "invalid version string for orsay platform";
+                        return /^[0-9]+\.[0-9]+$/.test(input) ? true : 'invalid version string for orsay platform';
                     }
                 }, {
                     type: 'input',
@@ -126,18 +128,21 @@ module.exports = {
 
                 // copy toast.js
                 fs.exists(toastSrc, function(exists){
-                    if(exists) shelljs.cp('-rf', toastSrc, dest);
-                    else console.log('\n\ncan\'t find toast.js at\n'+toastSrc);
+                    if(exists) {
+                        shelljs.cp('-rf', toastSrc, dest);
+                    }else{
+                        console.log('\n\ncan\'t find toast.js at\n'+toastSrc);
+                    }
                 }); 
 
                 shelljs.cp('-rf', path.join(wwwSrc, '*'), dest);
 
-                if(cordovaConf.contentSrc !== "index.html") {
-                    if(fs.existsSync(path.join(dest, "index.html"))) {
-                        grunt.log.error("Initial content, which is pointed by \'content\' tag in the 'config.xml'), is not 'index.html', but another 'index.html' is already exist in the source!");
+                if(cordovaConf.contentSrc !== 'index.html') {
+                    if(fs.existsSync(path.join(dest, 'index.html'))) {
+                        grunt.log.error('Initial content, which is pointed by \'content\' tag in the \'config.xml\'), is not \'index.html\', but another \'index.html\' is already exist in the source!');
                         return false;
                     }
-                    shelljs.mv(path.join(dest, cordovaConf.contentSrc), path.join(dest, "index.html"));
+                    shelljs.mv(path.join(dest, cordovaConf.contentSrc), path.join(dest, 'index.html'));
                 }
 
                 return true;
@@ -209,13 +214,13 @@ module.exports = {
         }
     },
     package: function (successCallback, errorCallback, build, dest){
-        console.log("\nStart packaging Legacy Samsung Smart TV Platform......");
+        console.log('\nStart packaging Legacy Samsung Smart TV Platform......');
 
         build = path.resolve(build);
         dest = path.resolve(dest);
 
         fs.mkdir(dest, function(){
-            zipdir(build, {saveTo: path.join(dest, "package.zip")}, function(err, buffer){
+            zipdir(build, {saveTo: path.join(dest, 'package.zip')}, function(){
                 console.log('Packaged at ' + dest);
                 successCallback && successCallback();        
             });
