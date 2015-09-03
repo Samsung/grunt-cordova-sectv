@@ -66,10 +66,9 @@ module.exports = {
 
                     userconf.setUserConf(config);
 
-                    !fs.existsSync(dest) && fs.mkdirSync(dest);
-                    fs.writeFileSync(userconf.filepath, JSON.stringify(config), {encoding: 'utf8'});
-
+                    userconf.setUserConf(config);
                     tizenUtil.buildProject();
+                    fs.writeFileSync(userconf.filepath, JSON.stringify(config), {encoding: 'utf8'});
                 });
             }
         };

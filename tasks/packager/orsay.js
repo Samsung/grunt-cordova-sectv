@@ -93,11 +93,8 @@ module.exports = {
                     config.resHeight = parseInt(tmp[1], 10);
 
                     userconf.setUserConf(config);
-
-                    !fs.existsSync(dest) && fs.mkdirSync(dest);
-                    fs.writeFileSync(userconf.filepath, JSON.stringify(config), {encoding: 'utf8'});
-
                     orsayUtil.buildProject();
+                    fs.writeFileSync(userconf.filepath, JSON.stringify(config), {encoding: 'utf8'});
                 });
             }
         };
