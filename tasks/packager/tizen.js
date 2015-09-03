@@ -17,7 +17,7 @@ module.exports = {
         platformRepos = path.resolve(platformRepos);
 
         // script
-        var cordovaSrc = path.resolve(scripts['cordova.js']);
+        // var cordovaSrc = path.resolve(scripts['cordova.js']);
         var toastSrc = path.resolve(scripts['toast.js']);
 
         // config
@@ -62,7 +62,7 @@ module.exports = {
                 }];
 
                 inquirer.prompt(choice, function (answers) {
-                    config = answers;
+                    var config = answers;
 
                     userconf.setUserConf(config);
 
@@ -89,7 +89,7 @@ module.exports = {
                 // copy toast.js
                 fs.exists(toastSrc, function(exists){
                     if(exists) shelljs.cp('-rf', toastSrc, dest);
-                    else console.log('\n\ncan\'t find toast.js at\n'+toastSrc);
+                    else grunt.log.error('\n\ncan\'t find toast.js at\n'+toastSrc);
                 }); 
 
                 shelljs.cp('-rf', path.join(wwwSrc, '*'), dest);

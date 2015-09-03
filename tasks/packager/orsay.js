@@ -17,7 +17,7 @@ module.exports = {
         platformRepos = path.resolve(platformRepos);
 
         // script
-        var cordovaSrc = path.resolve(scripts['cordova.js']);
+        // var cordovaSrc = path.resolve(scripts['cordova.js']);
         var toastSrc = path.resolve(scripts['toast.js']);
 
         // config
@@ -86,7 +86,7 @@ module.exports = {
                 }];
 
                 inquirer.prompt(choice, function (answers) {
-                    config = answers;
+                    var config = answers;
 
                     var tmp = config.resolution.split('x');
                     config.resWidth = parseInt(tmp[0], 10);
@@ -102,7 +102,7 @@ module.exports = {
         var orsayUtil = {
             semVer2OrsayVer : function(semver) {
                 var LEN_MINOR = 2;
-                var LEN_REV = 3;
+                // var LEN_REV = 3;
                 var tmp = semver.split('.');
                 var major = tmp[0];
                 var minor = '000000'+tmp[1];
