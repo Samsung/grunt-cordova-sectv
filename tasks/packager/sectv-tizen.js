@@ -18,10 +18,6 @@ module.exports = {
         dest = path.resolve(dest);
         platformRepos = path.resolve(platformRepos);
 
-        // script
-        // var cordovaSrc = path.resolve(scripts['cordova.js']);
-        var toastSrc = path.resolve(scripts['toast.js']);
-
         // config
         var cordovaConf = utils.getCordovaConfig();
 
@@ -60,7 +56,7 @@ module.exports = {
                     type: 'input',
                     name: 'description',
                     message: 'Application Description',
-                    default: 'Web application for Samsung Tizen TV'
+                    default: cordovaConf.description
                 }];
 
                 inquirer.prompt(choice, function (answers) {
@@ -85,17 +81,12 @@ module.exports = {
                     !fs.existsSync(curPath) && fs.mkdirSync(curPath);
                 }
 
-                // // copy cordova.js
-                // shelljs.cp('-rf', cordovaSrc, dest);
+                for(var key in scripts){
+                    var to = path.join(dest, key);
+                    var from = path.resolve(scripts[key]);
 
-                // copy toast.js
-                fs.exists(toastSrc, function(exists){
-                    if(exists) {
-                        shelljs.cp('-rf', toastSrc, dest);
-                    }else{
-                        console.log('\n\ncan\'t find toast.js at\n'+toastSrc);
-                    }
-                }); 
+                    shelljs.cp('-f', from, to);
+                }
 
                 shelljs.cp('-rf', path.join(wwwSrc, '*'), dest);
                 return true;
