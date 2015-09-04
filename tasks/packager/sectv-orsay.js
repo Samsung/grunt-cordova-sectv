@@ -30,6 +30,9 @@ module.exports = {
             getUserConf : function(){
                 return this.data;                
             },
+            saveFile : function(){
+                fs.writeFileSync(this.filepath, JSON.stringify(this.data), {encoding: 'utf8'});
+            },
             inputNewData : function(){
                 var choice = [{
                     type: 'input',
@@ -98,15 +101,35 @@ module.exports = {
         };
 
         var orsayUtil = {
+            minLen : 2,
+            revLen : 3,
             semVer2OrsayVer : function(semver) {
                 var LEN_MINOR = 2;
-                // var LEN_REV = 3;
+                var LEN_REV = 3;
                 var tmp = semver.split('.');
+                
                 var major = tmp[0];
-                var minor = '000000'+tmp[1];
-                minor = minor.substr(Math.max(minor.length-LEN_MINOR,0));
-                var rev = '000000'+tmp[2];
-                rev = rev.substr(Math.max(rev.length-LEN_MINOR,0));
+                var minor = tmp[1];
+                var rev = tmp[2];
+                
+                minor = '000000' + tmp[1];
+                rev = '000000' + tmp[2];
+                
+                minor = tmp[1].length > LEN_MINOR ? tmp[1] : minor.substr(Math.max(minor.length-LEN_MINOR,LEN_MINOR));
+                rev = tmp[2].length > LEN_REV ? tmp[2] : rev.substr(Math.max(rev.length-LEN_REV,LEN_REV));
+
+                this.minLen = minor.length;
+                this.revLen = rev.length;
+
+                return major + '.' + minor + rev;
+            },
+            updateRevision : function(curver){
+                var tmp = curver.split('.');
+
+                var major = tmp[0];
+                var minor = tmp[1].substring(0, this.minLen);
+                var rev = tmp[1].substr(this.minLen);
+                rev = parseInt(rev) + 1;
 
                 return major + '.' + minor + rev;
             },
@@ -176,6 +199,8 @@ module.exports = {
                 this.copySrcToDest() || (errorCallback && errorCallback());
                 this.buildPlatformAdditions() || (errorCallback && errorCallback());
 
+                userconf.saveFile();
+
                 console.log('Built at ' + dest);
                 successCallback && successCallback();
             }
@@ -183,24 +208,42 @@ module.exports = {
 
         if(fs.existsSync(userconf.filepath)){
             // userconf.json already exists
-            var cacheAsk = [{
-                type: 'confirm',
-                name: 'cache',
-                message: 'Already have [userconf.json], Do you want to use this data?'
-            }];
 
             var data = fs.readFileSync(userconf.filepath);
             data = JSON.parse(data);
 
-            for(var key in data){
-                if(data.hasOwnProperty(key)){
-                    console.log('[data] '+key + ' : ' +data[key]);
+            var curVer = data.version;
+            var updateVer = orsayUtil.updateRevision(curVer);
+
+            var cacheAsk = [{
+                type: 'confirm',
+                name: 'cache',
+                message: 'Already have [userconf.json], Do you want to use this data?'
+            }, {
+                when: function(response){
+                    return response.cache;
+                },
+                type: 'input',
+                name: 'revision',
+                message: '(current version is '+curVer+ '), Application version',
+                default: updateVer,
+                validate: function(input) {
+                    return /^[0-9]+\.[0-9]+$/.test(input) ? true : 'invalid version string for orsay platform';
                 }
-            }
+            }];
+
+
+            // // for debuggind
+            // for(var key in data){
+            //     if(data.hasOwnProperty(key)){
+            //         console.log('[data] '+key + ' : ' +data[key]);
+            //     }
+            // }
             
             inquirer.prompt(cacheAsk, function(answers){
                 if(answers.cache){
                     // use cache data
+                    data.version = answers.revision;
                     userconf.setUserConf(data);
                     orsayUtil.buildProject();
                 }else{
