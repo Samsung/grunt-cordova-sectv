@@ -127,11 +127,11 @@ module.exports = {
                 var tmp = curver.split('.');
 
                 var major = tmp[0];
-                var minor = tmp[1].substring(0, this.minLen);
-                var rev = tmp[1].substr(this.minLen);
+                var minor = tmp[1].substring(0, tmp[1].length-this.revLen);
+                var rev = tmp[1].substr(tmp[1].length-this.revLen);
                 rev = parseInt(rev) + 1;
 
-                return major + '.' + minor + rev;
+                return this.semVer2OrsayVer(major + '.' + minor + '.' + rev);
             },
             copySrcToDest : function() {
                 var tmp = dest.split(path.sep);
