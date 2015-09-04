@@ -82,10 +82,12 @@ module.exports = {
                 }
 
                 for(var key in scripts){
-                    var to = path.join(dest, key);
-                    var from = path.resolve(scripts[key]);
+                    if(scripts.hasOwnProperty(key)){
+                        var to = path.join(dest, key);
+                        var from = path.resolve(scripts[key]);
 
-                    shelljs.cp('-f', from, to);
+                        shelljs.cp('-f', from, to);
+                    }
                 }
 
                 shelljs.cp('-rf', path.join(wwwSrc, '*'), dest);

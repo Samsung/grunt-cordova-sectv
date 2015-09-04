@@ -120,10 +120,12 @@ module.exports = {
                 }
 
                 for(var key in scripts){
-                    var to = path.join(dest, key);
-                    var from = path.resolve(scripts[key]);
+                    if(scripts.hasOwnProperty(key)){
+                        var to = path.join(dest, key);
+                        var from = path.resolve(scripts[key]);
 
-                    shelljs.cp('-f', from, to);
+                        shelljs.cp('-f', from, to);
+                    }
                 }
 
                 shelljs.cp('-rf', path.join(wwwSrc, '*'), dest);
@@ -187,11 +189,18 @@ module.exports = {
                 message: 'Already have [userconf.json], Do you want to use this data?'
             }];
 
+            var data = fs.readFileSync(userconf.filepath);
+            data = JSON.parse(data);
+
+            for(var key in data){
+                if(data.hasOwnProperty(key)){
+                    console.log('[data] '+key + ' : ' +data[key]);
+                }
+            }
+            
             inquirer.prompt(cacheAsk, function(answers){
                 if(answers.cache){
                     // use cache data
-                    var data = fs.readFileSync(userconf.filepath);
-                    data = JSON.parse(data);
                     userconf.setUserConf(data);
                     orsayUtil.buildProject();
                 }else{
