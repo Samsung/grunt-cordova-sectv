@@ -30,6 +30,9 @@ module.exports = {
             getUserConf : function(){
                 return this.data;                
             },
+            saveFile : function(){
+                fs.writeFileSync(this.filepath, JSON.stringify(this.data), {encoding: 'utf8'});
+            },
             inputNewData : function(){
                 var choice = [{
                     type: 'input',
@@ -47,7 +50,7 @@ module.exports = {
                 }, {
                     type: 'input',
                     name: 'version',
-                    message: 'Application Version(Valid RegExp: \d.\d.\d)',
+                    message: 'Application Version(Valid RegExp: \\d.\\d.\\d)',
                     default: cordovaConf.version,
                     validate: function(input) {
                         return /\d.\d.\d/.test(input) ? true : 'invalid version string for tizen platform';
@@ -63,15 +66,20 @@ module.exports = {
                     var config = answers;
 
                     userconf.setUserConf(config);
-
-                    userconf.setUserConf(config);
                     tizenUtil.buildProject();
-                    fs.writeFileSync(userconf.filepath, JSON.stringify(config), {encoding: 'utf8'});
                 });
             }
         };
 
         var tizenUtil = {
+            updateRevision : function(curver){
+                var tmp = curver.split('.');
+                var major = tmp[0];
+                var minor = tmp[1];
+                var revision = parseInt(tmp[2]) + 1;
+
+                return major + '.' + minor + '.' + revision;
+            },
             copySrcToDest : function() {
                 var tmp = dest.split(path.sep);
                 
@@ -127,6 +135,8 @@ module.exports = {
                 this.copySrcToDest() || (errorCallback && errorCallback());
                 this.buildPlatformAdditions() || (errorCallback && errorCallback());
 
+                userconf.saveFile();
+
                 console.log('Built at ' + dest);
                 successCallback && successCallback();
             }
@@ -134,17 +144,34 @@ module.exports = {
 
         if(fs.existsSync(userconf.filepath)){
             // userconf.json already exists
+
+            var data = fs.readFileSync(userconf.filepath);
+            data = JSON.parse(data);
+
+            var curVer = data.version;
+            var updateVer = tizenUtil.updateRevision(curVer);
+
             var cacheAsk = [{
                 type: 'confirm',
                 name: 'cache',
                 message: 'Already have [userconf.json], Do you want to use this data?'
+            }, {
+                when: function(response){
+                    return response.cache;
+                },
+                type: 'input',
+                name: 'revision',
+                message: '(current version is '+curVer+ '), Application version',
+                default: updateVer,
+                validate: function(input) {
+                    return /\d.\d.\d/.test(input) ? true : 'invalid version string for tizen platform';
+                }
             }];
-
+            
             inquirer.prompt(cacheAsk, function(answers){
                 if(answers.cache){
                     // use cache data
-                    var data = fs.readFileSync(userconf.filepath);
-                    data = JSON.parse(data);
+                    data.version = answers.revision;
                     userconf.setUserConf(data);
                     tizenUtil.buildProject();
                 }else{
