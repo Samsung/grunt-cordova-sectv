@@ -3,7 +3,31 @@ Grunt task for build and package the cordova project with `sectv-***` platforms.
 
 # About this project
 This project would help who makes Samsung Tizen TV or Legacy Samsung Smart TV web application using cordova.
-It supports several functions like build(`sectv-build`) and package(`sectv-package`) project of each platforms.
+It provides several grunt task:
+* `sectv-build`: Creates application project for each platforms from your cordova project.
+    * Options for the task:
+        ```
+        'sectv-build': {	// task
+            'sectv-orsay': {	// target
+                dest: 'platforms/sectv-orsay/www',	// Destination path to create the application project.
+                platformRepos: '../cordova-sectv-orsay',	// Path to 'sectv-***` cordova platform's repository.
+                scripts: {	// copy the scripts to the application project
+                    'cordova.js': '../cordova-js/pkg/cordova.sectv-orsay.js',
+                    'toast.js': '../cordova-plugin-toast/platform_www/sectv-orsay/toast.js'
+                }
+            }
+        }
+        ```
+* `sectv-package`: Packaging the application project into each platforms package file format like `.zip` or `.wgt`.
+    * Options for the task:
+        ```
+        'sectv-package': {	// task
+            'sectv-orsay': {	// target
+                build: 'platforms/sectv-orsay/www',	// Path to Application project
+                dest: 'platforms/sectv-orsay/build'	// Directory to create the package
+            }
+        }
+        ```
 
 # Installation
 ```shell
