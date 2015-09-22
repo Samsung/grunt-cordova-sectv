@@ -201,7 +201,11 @@ function updateRevision(curver) {
     var tmp = curver.split('.');
     var major = tmp[0];
     var minor = tmp[1];
-    var revision = parseInt(tmp[2]) + 1;
+    var revision = 1;
 
-    return major + '.' + minor + '.' + revision;
+    if(tmp[2]){
+        revision = parseInt(tmp[2]) + 1;
+    }
+
+    return parseInt(major) + '.' + parseInt(minor) + '.' + revision;
 }
