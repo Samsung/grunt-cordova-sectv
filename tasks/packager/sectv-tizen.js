@@ -30,37 +30,42 @@ module.exports = {
             var data = fs.readFileSync(userconfPath);
             data = JSON.parse(data);
 
-            var curVer = data.version;
-            var updateVer = updateRevision(curVer);
+            if(data.hasOwnProperty('version')){
+                var curVer = data.version;
+                var updateVer = updateRevision(curVer);
 
-            var cacheAsk = [{
-                type: 'confirm',
-                name: 'cache',
-                message: 'Already have [userconf.json], Do you want to use this data?'
-            }, {
-                when: function(response){
-                    return response.cache;
-                },
-                type: 'input',
-                name: 'revision',
-                message: '(current version is '+curVer+ '), Application version',
-                default: updateVer,
-                validate: function(input) {
-                    return /\d.\d.\d/.test(input) ? true : 'invalid version string for tizen platform';
-                }
-            }];
-            
-            inquirer.prompt(cacheAsk, function(answers){
-                if(answers.cache){
-                    // use cache data
-                    data.version = answers.revision;
-                    setUserConf(data);
-                    buildProject();
-                }else{
-                    // input new data
-                    inputNewData();        
-                }
-            });
+                var cacheAsk = [{
+                    type: 'confirm',
+                    name: 'cache',
+                    message: 'Already have [userconf.json], Do you want to use this data?'
+                }, {
+                    when: function(response){
+                        return response.cache;
+                    },
+                    type: 'input',
+                    name: 'revision',
+                    message: '(current version is '+curVer+ '), Application version',
+                    default: updateVer,
+                    validate: function(input) {
+                        return /\d.\d.\d/.test(input) ? true : 'invalid version string for tizen platform';
+                    }
+                }];
+                
+                inquirer.prompt(cacheAsk, function(answers){
+                    if(answers.cache){
+                        // use cache data
+                        data.version = answers.revision;
+                        setUserConf(data);
+                        buildProject();
+                    }else{
+                        // input new data
+                        inputNewData();        
+                    }
+                });
+            } else {
+                console.log('[userconf.json] is empty. Please fill out the information again.');
+                inputNewData();
+            }
         }else{
             // create userconf.json, input new data
             inputNewData();

@@ -34,37 +34,42 @@ module.exports = {
             var data = fs.readFileSync(userconfPath);
             data = JSON.parse(data);
 
-            var curVer = data.version;
-            var updateVer = updateRevision(curVer);
+            if(data.hasOwnProperty('version')){
+                var curVer = data.version;
+                var updateVer = updateRevision(curVer);
 
-            var cacheAsk = [{
-                type: 'confirm',
-                name: 'cache',
-                message: 'Already have [userconf.json], Do you want to use this data?'
-            }, {
-                when: function(response){
-                    return response.cache;
-                },
-                type: 'input',
-                name: 'revision',
-                message: '(current version is '+curVer+ '), Application version',
-                default: updateVer,
-                validate: function(input) {
-                    return /^[0-9]+\.[0-9]+$/.test(input) ? true : 'invalid version string for orsay platform';
-                }
-            }];
+                var cacheAsk = [{
+                    type: 'confirm',
+                    name: 'cache',
+                    message: 'Already have [userconf.json], Do you want to use this data?'
+                }, {
+                    when: function(response){
+                        return response.cache;
+                    },
+                    type: 'input',
+                    name: 'revision',
+                    message: '(current version is '+curVer+ '), Application version',
+                    default: updateVer,
+                    validate: function(input) {
+                        return /^[0-9]+\.[0-9]+$/.test(input) ? true : 'invalid version string for orsay platform';
+                    }
+                }];
 
-            inquirer.prompt(cacheAsk, function(answers){
-                if(answers.cache){
-                    // use cache data
-                    data.version = answers.revision;
-                    setUserConf(data);
-                    buildProject();
-                }else{
-                    // input new data
-                    inputNewData();        
-                }
-            });
+                inquirer.prompt(cacheAsk, function(answers){
+                    if(answers.cache){
+                        // use cache data
+                        data.version = answers.revision;
+                        setUserConf(data);
+                        buildProject();
+                    }else{
+                        // input new data
+                        inputNewData();        
+                    }
+                });
+            } else {
+                console.log('[userconf.json] is empty. Please fill out the information again.');
+                inputNewData();
+            }
         }else{
             // create userconf.json, input new data
             inputNewData();
@@ -72,7 +77,7 @@ module.exports = {
 
         function copySrcToDest() {
             var tmp = dest.split(path.sep);
-                        
+            
             var curPath = tmp[0];
             for(var i=1; i<tmp.length; i++) {
                 curPath = path.join(curPath, tmp[i]);
@@ -207,7 +212,6 @@ module.exports = {
 
                 setUserConf(config);
                 buildProject();
-                fs.writeFileSync(userconfPath, JSON.stringify(config), {encoding: 'utf8'});
             });
         }
     },
@@ -245,6 +249,10 @@ function semVer2OrsayVer(semver) {
     var LEN_REV = 3;
 
     var tmp = semver.split('.');
+    
+    if(tmp.length < 3){
+        return semver;
+    }
                 
     var major = tmp[0];
     var minor = tmp[1];
@@ -252,7 +260,7 @@ function semVer2OrsayVer(semver) {
                 
     minor = '000000' + tmp[1];
     rev = '000000' + tmp[2];
-                
+    
     minor = tmp[1].length > LEN_MINOR ? tmp[1] : minor.substr(Math.max(minor.length-LEN_MINOR,LEN_MINOR));
     rev = tmp[2].length > LEN_REV ? tmp[2] : rev.substr(Math.max(rev.length-LEN_REV,LEN_REV));
 
@@ -264,7 +272,7 @@ function semVer2OrsayVer(semver) {
 
 function updateRevision(curver) {
     var tmp = curver.split('.');
-
+    
     var major = tmp[0];
     var minor = tmp[1].substring(0, tmp[1].length - revLen);
     var rev = tmp[1].substr(tmp[1].length - revLen);
