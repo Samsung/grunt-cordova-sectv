@@ -28,13 +28,22 @@ module.exports = {
         // config
         var cordovaConf = utils.getCordovaConfig();
 
-        if(fs.existsSync(userconfPath)){
-            // userconf.json already exists
-
+        if(!(fs.existsSync(userconfPath))){
+            // userconf.json is not exists
+            inputNewData();
+        }
+        else{
+            // userconf.json is already exists
             var data = fs.readFileSync(userconfPath);
             data = JSON.parse(data);
 
-            if(data.hasOwnProperty('version')){
+            if(!(data.hasOwnProperty('version'))){
+                // userconf.json is empty
+                console.log('\'userconf.json\' is empty. Please fill out the information again.');
+                inputNewData();
+            }
+            else{
+                // userconf.json has data
                 var curVer = data.version;
                 var tmp = curVer.split('.');
 
@@ -44,14 +53,20 @@ module.exports = {
                         break;
                     }
                 }
-
-                if(i == tmp.length){
+                
+                if((i != tmp.length) || (tmp.length > 3) || (tmp.length < 2)){
+                    // version is invalid
+                    console.log('\'userconf.json\' has invalid data. Please fill out the information again.');
+                    inputNewData();
+                }
+                else{
+                    // version is valid
                     var updateVer = updateRevision(curVer);
 
                     var cacheAsk = [{
                         type: 'confirm',
                         name: 'cache',
-                        message: 'Already have [userconf.json], Do you want to use this data?'
+                        message: 'Already have \'userconf.json\', Do you want to use this data?'
                     }, {
                         when: function(response){
                             return response.cache;
@@ -76,17 +91,8 @@ module.exports = {
                             inputNewData();        
                         }
                     });
-                }else{
-                    console.log('[userconf.json] has invalid data. Please fill out the information again.');
-                    inputNewData();
                 }
-            } else {
-                console.log('[userconf.json] is empty. Please fill out the information again.');
-                inputNewData();
             }
-        }else{
-            // create userconf.json, input new data
-            inputNewData();
         }
 
         function copySrcToDest() {
