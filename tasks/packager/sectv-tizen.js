@@ -166,7 +166,7 @@ module.exports = {
                 type: 'input',
                 name: 'id',
                 message: 'Application Id (Valid RegExp: [0-9a-zA-Z]{10})',
-                default: 'puttizenid',
+                default: generateTizenId(),
                 validate: function(input) {
                     return /[0-9a-zA-Z]{10}/.test(input) ? true : 'invalid id string for tizen platform';
                 }
@@ -233,4 +233,8 @@ function updateRevision(curver) {
     }
 
     return parseInt(major) + '.' + parseInt(minor) + '.' + revision;
+}
+
+function generateTizenId(){
+    return Math.random().toString(36).substr(2,10);
 }
