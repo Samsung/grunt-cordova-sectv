@@ -130,7 +130,6 @@ module.exports = {
             // replace .project template with actual configuration
             // .project is hidden file in linux
             replaceTemplate('project', true);
-            replaceTemplate('tproject', true);
 
             return true;
         }
