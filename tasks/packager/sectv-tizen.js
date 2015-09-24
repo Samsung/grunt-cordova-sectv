@@ -59,6 +59,13 @@ module.exports = {
                     // version is valid
                     var updateVer = updateRevision(curVer);
 
+                    console.log('');
+                    console.log('      > [ Current Information ]');
+                    console.log('      > name        : ' + data.name);
+                    console.log('      > id          : ' + data.id);
+                    console.log('      > version     : ' + data.version);
+                    console.log('      > description : ' + data.description);
+
                     var cacheAsk = [{
                         type: 'confirm',
                         name: 'cache',
