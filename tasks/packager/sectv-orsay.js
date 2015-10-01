@@ -163,11 +163,10 @@ module.exports = {
                                     
             //hidden file.......
             if(isHidden){
-                shelljs.mv('-f', path.join(dest, filename + '.tmp'), path.join(dest, '.'+resultFile));
-            }else{
-                shelljs.mv('-f', path.join(dest, filename + '.tmp'), path.join(dest, resultFile));
+                resultFile =  '.'+resultFile;
             }
-
+            
+            shelljs.mv('-f', path.join(dest, filename + '.tmp'), path.join(dest, resultFile));
             shelljs.rm('-f', path.join(dest, filename));
         }
 
