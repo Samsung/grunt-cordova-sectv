@@ -19,7 +19,7 @@ module.exports = {
         wwwSrc = path.resolve(wwwSrc);
         dest = path.resolve(dest);
         platformRepos = path.resolve(platformRepos);
-        userconfPath = path.join(dest, '../userconf.json');
+        userconfPath = path.join('platforms', 'sectv-tizen.json');
 
         // config
         var cordovaConf = utils.getCordovaConfig();
