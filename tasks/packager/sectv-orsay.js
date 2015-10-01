@@ -138,14 +138,14 @@ module.exports = {
             shelljs.cp('-rf', path.join(platformRepos, 'www', '*'), dest);
 
             // replace config.xml template with actual configuration
-            replaceTemplate('config.xml');
+            replaceTemplate('config.xml.tmpl');
                         
             // replace widget.info template with actual configuration
-            replaceTemplate('widget.info');
+            replaceTemplate('widget.info.tmpl');
 
             // replace .project template with actual configuration
             // .project is hidden file in linux
-            replaceTemplate('project', true);
+            replaceTemplate('project.tmpl', true);
 
             return true;
         }
@@ -156,16 +156,19 @@ module.exports = {
 
             var tmplFile = fs.readFileSync(path.join(dest, filename), {encoding: 'utf8'});
             var rendered = mustache.render(tmplFile, data);
+            var removal = '.tmpl';
+            var resultFile = filename.substring(0, filename.length - removal.length);
 
             fs.writeFileSync(path.join(dest, filename + '.tmp'), rendered, {encoding: 'utf8'});
-                        
+                                    
             //hidden file.......
             if(isHidden){
-                shelljs.mv('-f', path.join(dest, filename + '.tmp'), path.join(dest, '.'+filename));
-                shelljs.rm('-f', path.join(dest, filename));
+                shelljs.mv('-f', path.join(dest, filename + '.tmp'), path.join(dest, '.'+resultFile));
             }else{
-                shelljs.mv('-f', path.join(dest, filename + '.tmp'), path.join(dest, filename));
+                shelljs.mv('-f', path.join(dest, filename + '.tmp'), path.join(dest, resultFile));
             }
+
+            shelljs.rm('-f', path.join(dest, filename));
         }
 
         function buildProject() {
