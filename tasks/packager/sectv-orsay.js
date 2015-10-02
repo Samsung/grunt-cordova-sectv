@@ -10,6 +10,7 @@ var grunt = require('grunt');
 var zipdir = require('zip-dir');
 
 var userconfData = {};
+var orsayData = {};
 var userconfPath = '';
 
 var minLen = 2;
@@ -23,7 +24,7 @@ module.exports = {
         wwwSrc = path.resolve(wwwSrc);
         dest = path.resolve(dest);
         platformRepos = path.resolve(platformRepos);
-        userconfPath = path.join('platforms', 'sectv-orsay.json');
+        userconfPath = path.join('platforms', 'userconf.json');
 
         // config
         var cordovaConf = utils.getCordovaConfig();
@@ -34,17 +35,17 @@ module.exports = {
         }
         else{
             // userconf.json is already exists
-            var data = fs.readFileSync(userconfPath);
-            data = JSON.parse(data);
-
-            if(!(data.hasOwnProperty('version'))){
+            userconfData = JSON.parse(fs.readFileSync(userconfPath));
+            
+            if(!(userconfData.hasOwnProperty('orsay'))){
                 // userconf.json is empty
                 console.log('\'userconf.json\' is empty. Please fill out the information again.');
                 inputNewData();
             }
             else{
                 // userconf.json has data
-                var curVer = data.version;
+                orsayData = userconfData.orsay;
+                var curVer = orsayData.version;
                 var tmp = curVer.split('.');
 
                 var i = 0 ;
@@ -62,6 +63,7 @@ module.exports = {
                 else{
                     // version is valid
                     var updateVer = updateRevision(curVer);
+                    var data = orsayData;
 
                     console.log('');
                     console.log('      > [ Current Information ]');
@@ -92,7 +94,8 @@ module.exports = {
                         if(answers.cache){
                             // use cache data
                             data.version = answers.revision;
-                            setUserConf(data);
+
+                            orsayData = data;
                             buildProject();
                         }else{
                             // input new data
@@ -152,7 +155,7 @@ module.exports = {
 
         function replaceTemplate(filename, isHidden) {
             // replace config.xml template with actual configuration
-            var data = getUserConf();
+            var data = orsayData;
 
             var tmplFile = fs.readFileSync(path.join(dest, filename), {encoding: 'utf8'});
             var rendered = mustache.render(tmplFile, data);
@@ -240,7 +243,7 @@ module.exports = {
                 config.resWidth = parseInt(tmp[0], 10);
                 config.resHeight = parseInt(tmp[1], 10);
 
-                setUserConf(config);
+                orsayData = config;
                 buildProject();
             });
         }
@@ -260,16 +263,8 @@ module.exports = {
     }
 };
 
-// UserConf
-function setUserConf(data) {
-    userconfData = data;
-}
-
-function getUserConf() {
-    return userconfData;
-}
-
 function saveFile() {
+    userconfData.orsay = orsayData;
     fs.writeFileSync(userconfPath, JSON.stringify(userconfData), {encoding: 'utf8'});
 }
 

@@ -9,6 +9,7 @@ var mustache = require('mustache');
 var zipdir = require('zip-dir');
 
 var userconfData = {};
+var tizenData = {};
 var userconfPath = '';
 
 module.exports = {
@@ -19,7 +20,7 @@ module.exports = {
         wwwSrc = path.resolve(wwwSrc);
         dest = path.resolve(dest);
         platformRepos = path.resolve(platformRepos);
-        userconfPath = path.join('platforms', 'sectv-tizen.json');
+        userconfPath = path.join('platforms', 'userconf.json');
 
         // config
         var cordovaConf = utils.getCordovaConfig();
@@ -30,17 +31,17 @@ module.exports = {
         }
         else{
             // userconf.json is already exists
-            var data = fs.readFileSync(userconfPath);
-            data = JSON.parse(data);
-
-            if(!(data.hasOwnProperty('version'))){
+            userconfData = JSON.parse(fs.readFileSync(userconfPath));
+            
+            if(!(userconfData.hasOwnProperty('tizen'))){
                 // userconf.json is empty
                 console.log('\'userconf.json\' is empty. Please fill out the information again.');
                 inputNewData();
             }
             else{
                 // userconf.json has data
-                var curVer = data.version;
+                tizenData = userconfData.tizen;
+                var curVer = tizenData.version;
                 var tmp = curVer.split('.');
 
                 var i = 0 ;
@@ -58,6 +59,7 @@ module.exports = {
                 else{
                     // version is valid
                     var updateVer = updateRevision(curVer);
+                    var data = tizenData;
 
                     console.log('');
                     console.log('      > [ Current Information ]');
@@ -87,7 +89,8 @@ module.exports = {
                         if(answers.cache){
                             // use cache data
                             data.version = answers.revision;
-                            setUserConf(data);
+                            
+                            tizenData = data;
                             buildProject();
                         }else{
                             // input new data
@@ -136,12 +139,12 @@ module.exports = {
 
         function replaceTemplate(filename, isHidden) {
             // replace config.xml template with actual configuration
-            var data = getUserConf();
+            var data = tizenData;
 
             var tmplFile = fs.readFileSync(path.join(dest, filename), {encoding: 'utf8'});
             var rendered = mustache.render(tmplFile, data);
             var removal = '.tmpl';
-            var resultFile = filename.substring(0, filename.length - removal.length);;
+            var resultFile = filename.substring(0, filename.length - removal.length);
 
             fs.writeFileSync(path.join(dest, filename + '.tmp'), rendered, {encoding: 'utf8'});
                         
@@ -196,7 +199,7 @@ module.exports = {
             inquirer.prompt(choice, function (answers) {
                 var config = answers;
 
-                setUserConf(config);
+                tizenData = config;
                 buildProject();
             });
         }
@@ -216,16 +219,8 @@ module.exports = {
     }
 };
 
-//userConf
-function setUserConf(data) {
-    userconfData = data;
-}
-
-function getUserConf() {
-    return userconfData;
-}
-
 function saveFile() {
+    userconfData.tizen = tizenData;
     fs.writeFileSync(userconfPath, JSON.stringify(userconfData), {encoding: 'utf8'});
 }
 
