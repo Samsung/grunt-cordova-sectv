@@ -254,8 +254,22 @@ module.exports = {
         build = path.resolve(build);
         dest = path.resolve(dest);
 
+        userconfPath = path.join('platforms', 'userconf.json');
+
+        var projectName = 'package';
+
+        if(fs.existsSync(userconfPath)){
+            var data = JSON.parse(fs.readFileSync(userconfPath));
+
+            if(data.hasOwnProperty('orsay')){
+                projectName = data.orsay.name;
+            }
+        }else{
+            grunt.log.error('Build the project first.');
+        }
+
         fs.mkdir(dest, function(){
-            zipdir(build, {saveTo: path.join(dest, 'package.zip')}, function(){
+            zipdir(build, {saveTo: path.join(dest, projectName + '.zip')}, function(){
                 console.log('Packaged at ' + dest);
                 successCallback && successCallback();        
             });

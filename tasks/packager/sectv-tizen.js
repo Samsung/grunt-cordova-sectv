@@ -210,8 +210,22 @@ module.exports = {
         build = path.resolve(build);
         dest = path.resolve(dest);
 
+        userconfPath = path.join('platforms', 'userconf.json');
+
+        var projectName = 'package';
+
+        if(fs.existsSync(userconfPath)){
+            var data = JSON.parse(fs.readFileSync(userconfPath));
+
+            if(data.hasOwnProperty('tizen')){
+                projectName = data.tizen.name;
+            }
+        }else{
+            grunt.log.error('Build the project first.');
+        }
+
         fs.mkdir(dest, function(){
-            zipdir(build, {saveTo: path.join(dest, 'package.wgt')}, function(){
+            zipdir(build, {saveTo: path.join(dest, projectName + '.wgt')}, function(){
                 console.log('Packaged at ' + dest);
                 successCallback && successCallback();        
             });
