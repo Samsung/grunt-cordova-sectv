@@ -34,7 +34,8 @@ module.exports = function(grunt) {
             },
             'sectv-tizen': {
                 build: 'platforms/sectv-tizen/www',
-                dest: 'platforms/sectv-tizen/build'
+                dest: 'platforms/sectv-tizen/build',
+                cliSrc: 'c:/tizen-sdk/tools/ide/bin'
             }
         }
     });

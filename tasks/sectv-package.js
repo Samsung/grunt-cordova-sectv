@@ -9,6 +9,7 @@ module.exports = function(grunt) {
         // path
         var build = this.data.build || path.join('platforms', platformName, 'www');
         var dest = this.data.dest || path.join('platforms', platformName, 'build');
+        var cliSrc = this.data.cliSrc;
         
         var packager = require('./packager/'+platformName);
         var done = this.async();
@@ -16,6 +17,6 @@ module.exports = function(grunt) {
             done();
         }, function () {
             done();
-        }, build, dest);
+        }, build, dest, cliSrc);
     });
 };

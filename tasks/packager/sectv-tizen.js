@@ -6,6 +6,7 @@ var inquirer = require('inquirer');
 var utils = require('../lib/utils');
 var shelljs = require('shelljs');
 var mustache = require('mustache');
+var grunt = require('grunt');
 var zipdir = require('zip-dir');
 
 var userconfData = {};
@@ -204,11 +205,12 @@ module.exports = {
             });
         }
     },
-    package: function (successCallback, errorCallback, build, dest){
+    package: function (successCallback, errorCallback, build, dest, cliSrc){
         console.log('\nStart packaging Samsung Tizen TV Platform......');
 
         build = path.resolve(build);
         dest = path.resolve(dest);
+        cliSrc = path.resolve(cliSrc);
 
         userconfPath = path.join('platforms', 'userconf.json');
 
@@ -230,6 +232,15 @@ module.exports = {
                 successCallback && successCallback();        
             });
         });
+
+        //tizen.bat test code. please complete...........kook D......
+
+        //for testing : get tizen.bat version
+        shelljs.exec(path.join(cliSrc, 'tizen version'));
+
+        //for testing : package with wgt type
+        //url : https://developer.tizen.org/development/tools/web-tools/command-line-interface#mw_package
+        shelljs.exec(path.join(cliSrc, 'tizen package -t wgt'));
     }
 };
 
