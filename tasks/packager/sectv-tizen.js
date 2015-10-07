@@ -189,7 +189,7 @@ module.exports = {
                         buildProject();
                     });
                 }
-            })
+            });
         }
         else {
             askUserData(cordovaConf, function (data) {
@@ -260,12 +260,12 @@ module.exports = {
         dest = path.resolve(dest);
         cliSrc = path.resolve(cliSrc);
 
-        userconfPath = path.join('platforms', 'userconf.json');
+        var userConfPath = path.join('platforms', 'userconf.json');
 
         var projectName = 'package';
 
-        if (fs.existsSync(userconfPath)) {
-            var data = JSON.parse(fs.readFileSync(userconfPath));
+        if (fs.existsSync(userConfPath)) {
+            var data = JSON.parse(fs.readFileSync(userConfPath));
 
             if (data.hasOwnProperty('tizen')) {
                 projectName = data.tizen.name;
