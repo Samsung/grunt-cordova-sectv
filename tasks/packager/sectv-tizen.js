@@ -9,203 +9,251 @@ var mustache = require('mustache');
 var grunt = require('grunt');
 var zipdir = require('zip-dir');
 
-var userconfData = {};
-var tizenData = {};
-var userconfPath = '';
+function saveUserConfFile(configPath, tizenConf) {
+    var userConfData = {};
+    if (fs.existsSync(configPath)) {
+        userConfData = JSON.parse(fs.readFileSync(configPath));
+    }
+    userConfData.tizen = tizenConf;
+    fs.writeFileSync(configPath, JSON.stringify(userConfData, null, 2), {
+        encoding: 'utf8'
+    });
+}
+
+function getNextSemVersion(curver) {    // just increase revision
+    var tmp = curver.split('.');
+    var major = parseInt(tmp[0], 10);
+    var minor = parseInt(tmp[1], 10);
+    var revision = (parseInt(tmp[2], 10) || 0) + 1;
+
+    return major + '.' + minor + '.' + revision;
+}
+
+function generateTizenPackageID() {
+    return Math.random().toString(36).substr(2, 10);
+}
+
+function getValidTizenConfData(configPath) {
+    console.log(configPath);
+    if (!(fs.existsSync(configPath))) {
+        // userconf.json is not exists
+        return null;
+    }
+    // userconf.json is already exists
+    var userConfData = JSON.parse(fs.readFileSync(configPath));
+
+    if (!(userConfData.hasOwnProperty('tizen'))) {
+        // userconf.json doesn't have tizen data
+        return null;
+    }
+    var tizenData = userConfData.tizen;
+    if (typeof tizenData.name !== 'string' || tizenData.name.length <= 0) {
+        // name is invalid
+        return null;
+    }
+    if (typeof tizenData.packageid !== 'string' || tizenData.packageid.length !== 10) {
+        // packageid is invalid
+        return null;
+    }
+    if (!validateTizenVersion(tizenData.version)) {
+        // version is invalid
+        return null;
+    }
+    // description is not mendatory
+
+    return tizenData;
+}
+
+function validateTizenVersion(version) {
+    var tmp = version.split('.'),
+        i;
+    if (tmp.length !== 3) {
+        return false;
+    }
+    for (i = 0; i < tmp.length; i++) {
+        if (isNaN(tmp[i])) {
+            return false;
+        }
+    }
+
+    return i === tmp.length;
+}
+
+function confirmUseExistingData(userData, callback) {
+    console.log('');
+    console.log('      > [ Stored Information ]');
+    console.log('      > name        : ' + userData.name);
+    console.log('      > package ID  : ' + userData.packageid);
+    console.log('      > version     : ' + userData.version);
+    console.log('      > description : ' + userData.description);
+
+    var ask = [{
+        type: 'confirm',
+        name: 'useExisting',
+        message: 'Already have \'userconf.json\', Do you want to use this data?'
+    }];
+
+    inquirer.prompt(ask, function(answers) {
+        callback(!!answers.useExisting);
+    });
+}
+
+function askUserData(cordovaConf, callback, versionOnly, userData) {
+    var ask;
+    if(versionOnly) {
+        var curVer = userData.version;
+        var updateVer = getNextSemVersion(userData.version);
+        ask = [{
+            type: 'input',
+            name: 'version',
+            message: 'Current version is ' + curVer + '. Application version: ',
+            default: updateVer,
+            validate: function(input) {
+                return /\d.\d.\d/.test(input) ? true : 'invalid version string for tizen platform';
+            }
+        }];
+        inquirer.prompt(ask, function(answers) {
+            callback(answers);
+        });
+    }
+    else {
+        ask = [{
+            type: 'input',
+            name: 'name',
+            message: 'What\'s the application\'s name?',
+            default: cordovaConf.name
+        }, {
+            type: 'input',
+            name: 'packageid',
+            message: 'Package Id (Valid RegExp: [0-9a-zA-Z]{10})',
+            default: generateTizenPackageID(),
+            validate: function(input) {
+                return /[0-9a-zA-Z]{10}/.test(input) ? true : 'invalid id string for tizen platform';
+            }
+        }, {
+            type: 'input',
+            name: 'version',
+            message: 'Application Version(Valid RegExp: /\d./\d./\d)',
+            default: cordovaConf.version,
+            validate: function(input) {
+                return /\d.\d.\d/.test(input) ? true : 'invalid version string for tizen platform';
+            }
+        }, {
+            type: 'input',
+            name: 'description',
+            message: 'Application Description',
+            default: utils.trim(cordovaConf.description)
+        }];
+        inquirer.prompt(ask, function(answers) {
+            callback(answers);
+        });
+    }
+}
+
+function prepareDir(dir) {
+    dir = path.resolve(dir);
+    var tmp = dir.split(path.sep);
+    var curPath = tmp[0];
+    for (var i=1; i<tmp.length; i++) {
+        curPath = path.join(curPath, tmp[i]);
+        if (!fs.existsSync(curPath)) {
+            fs.mkdirSync(curPath);
+        }
+    }
+}
 
 module.exports = {
-    build: function (successCallback, errorCallback, wwwSrc, dest, platformRepos, scripts) {
+    build: function(successCallback, errorCallback, wwwSrc, dest, platformRepos, scripts) {
         console.log('\nStart building Samsung Tizen Platform......');
 
         // file path
         wwwSrc = path.resolve(wwwSrc);
         dest = path.resolve(dest);
         platformRepos = path.resolve(platformRepos);
-        userconfPath = path.join('platforms', 'userconf.json');
+        var userConfPath = path.join('platforms', 'userconf.json');
 
         // config
         var cordovaConf = utils.getCordovaConfig();
-
-        if(!(fs.existsSync(userconfPath))){
-            // userconf.json is not exists
-            inputNewData();
-        }
-        else{
-            // userconf.json is already exists
-            userconfData = JSON.parse(fs.readFileSync(userconfPath));
-            
-            if(!(userconfData.hasOwnProperty('tizen'))){
-                // userconf.json is empty
-                console.log('\'userconf.json\' is empty. Please fill out the information again.');
-                inputNewData();
-            }
-            else{
-                // userconf.json has data
-                tizenData = userconfData.tizen;
-                var curVer = tizenData.version;
-                var tmp = curVer.split('.');
-
-                var i = 0 ;
-                for(i = 0; i < tmp.length; i++){
-                    if(isNaN(tmp[i])){
-                        break;
-                    }
+        var userData = getValidTizenConfData(userConfPath);
+        if(userData) {
+            confirmUseExistingData(userData, function (useExisting) {
+                if(useExisting) {
+                    askUserData(cordovaConf, function (data) {
+                        userData.version = data.version;
+                        buildProject();
+                    }, true, userData);
                 }
-
-                if((i != tmp.length) || (tmp.length > 3) || (tmp.length < 2)){
-                    // version is invalid
-                    console.log('\'userconf.json\' has invalid data. Please fill out the information again.');
-                    inputNewData();
-                }
-                else{
-                    // version is valid
-                    var updateVer = updateRevision(curVer);
-                    var data = tizenData;
-
-                    console.log('');
-                    console.log('      > [ Current Information ]');
-                    console.log('      > name        : ' + data.name);
-                    console.log('      > id          : ' + data.id);
-                    console.log('      > version     : ' + data.version);
-                    console.log('      > description : ' + data.description);
-
-                    var cacheAsk = [{
-                        type: 'confirm',
-                        name: 'cache',
-                        message: 'Already have \'userconf.json\', Do you want to use this data?'
-                    }, {
-                        when: function(response){
-                            return response.cache;
-                        },
-                        type: 'input',
-                        name: 'revision',
-                        message: '(current version is '+curVer+ '), Application version',
-                        default: updateVer,
-                        validate: function(input) {
-                            return /\d.\d.\d/.test(input) ? true : 'invalid version string for tizen platform';
-                        }
-                    }];
-                    
-                    inquirer.prompt(cacheAsk, function(answers){
-                        if(answers.cache){
-                            // use cache data
-                            data.version = answers.revision;
-                            
-                            tizenData = data;
-                            buildProject();
-                        }else{
-                            // input new data
-                            inputNewData();        
-                        }
+                else {
+                    askUserData(cordovaConf, function (data) {
+                        userData = data;
+                        buildProject();
                     });
                 }
-            }
+            })
         }
-
-        function copySrcToDest() {
-            var tmp = dest.split(path.sep);
-                        
-            var curPath = tmp[0];
-            for(var i=1; i<tmp.length; i++) {
-                curPath = path.join(curPath, tmp[i]);
-                !fs.existsSync(curPath) && fs.mkdirSync(curPath);
-            }
-
-            for(var key in scripts){
-                if(scripts.hasOwnProperty(key)){
-                    var to = path.join(dest, key);
-                    var from = path.resolve(scripts[key]);
-
-                    shelljs.cp('-f', from, to);
-                }
-            }
-
-            shelljs.cp('-rf', path.join(wwwSrc, '*'), dest);
-            
-            return true;
-        }
-
-        function buildPlatformAdditions() {
-            shelljs.cp('-rf', path.join(platformRepos, 'www', '*'), dest);
-
-            // replace config.xml template with actual configuration
-            replaceTemplate('config.xml.tmpl');
-
-            // replace .project template with actual configuration
-            // .project is hidden file in linux
-            replaceTemplate('project.tmpl', true);
-
-            return true;
-        }
-
-        function replaceTemplate(filename, isHidden) {
-            // replace config.xml template with actual configuration
-            var data = tizenData;
-
-            var tmplFile = fs.readFileSync(path.join(dest, filename), {encoding: 'utf8'});
-            var rendered = mustache.render(tmplFile, data);
-            var removal = '.tmpl';
-            var resultFile = filename.substring(0, filename.length - removal.length);
-
-            fs.writeFileSync(path.join(dest, filename + '.tmp'), rendered, {encoding: 'utf8'});
-                        
-            //hidden file.......
-            if(isHidden){
-                resultFile =  '.'+resultFile;
-            }
-
-            shelljs.mv('-f', path.join(dest, filename + '.tmp'), path.join(dest, resultFile));
-            shelljs.rm('-f', path.join(dest, filename));
+        else {
+            askUserData(cordovaConf, function (data) {
+                userData = data;
+                buildProject();
+            });
         }
 
         function buildProject() {
             copySrcToDest() || (errorCallback && errorCallback());
             buildPlatformAdditions() || (errorCallback && errorCallback());
-
-            saveFile();
-
+            replaceTemplates() || (errorCallback && errorCallback());
             console.log('Built at ' + dest);
+
+            saveUserConfFile(userConfPath, userData);
             successCallback && successCallback();
         }
 
-        function inputNewData() {
-            var choice = [{
-                type: 'input',
-                name: 'name',
-                message: 'What\'s the application\'s name?',
-                default: cordovaConf.name
-            }, {
-                type: 'input',
-                name: 'id',
-                message: 'Application Id (Valid RegExp: [0-9a-zA-Z]{10})',
-                default: generateTizenId(),
-                validate: function(input) {
-                    return /[0-9a-zA-Z]{10}/.test(input) ? true : 'invalid id string for tizen platform';
-                }
-            }, {
-                type: 'input',
-                name: 'version',
-                message: 'Application Version(Valid RegExp: /\d./\d./\d)',
-                default: cordovaConf.version,
-                validate: function(input) {
-                    return /\d.\d.\d/.test(input) ? true : 'invalid version string for tizen platform';
-                }
-            }, {
-                type: 'input',
-                name: 'description',
-                message: 'Application Description',
-                default: cordovaConf.description
-            }];
+        function copySrcToDest() {
+            prepareDir(dest);
 
-            inquirer.prompt(choice, function (answers) {
-                var config = answers;
+            for (var key in scripts) {
+                if (scripts.hasOwnProperty(key)) {
+                    var to = path.join(dest, key);
+                    var from = path.resolve(scripts[key]);
+                    shelljs.cp('-f', from, to);
+                }
+            }
 
-                tizenData = config;
-                buildProject();
-            });
+            shelljs.cp('-rf', path.join(wwwSrc, '*'), dest);
+
+            return true;
+        }
+
+        function buildPlatformAdditions() {
+            shelljs.cp('-rf', path.join(platformRepos, 'www', '*'), dest);
+            // hack: copying hidden files(starts with dot) at root('www') to the dest directory.
+            // if the dest is not exist, we can copy the platform files without this hack by using this command: cp -rf <PLATFORMREPOS>/www <destDir>
+            // But the dest directory has the application files at this moment. So we need to use this hack.
+            shelljs.cp('-rf', path.join(platformRepos, 'www', '.*'), dest);
+            return true;
+        }
+
+        function replaceTemplates() {
+            var files = fs.readdirSync(dest);
+            for(var i=0; i<files.length; i++) {
+                var fileName = files[i];
+                if(fileName.match(/\.tmpl$/)) {
+                    var tmplFilePath = path.join(dest, fileName);
+                    var destFilePath = path.join(dest, fileName.replace(/\.tmpl$/, ''));
+                    var template = fs.readFileSync(tmplFilePath, {
+                        encoding: 'utf8'
+                    });
+                    var rendered = mustache.render(template, userData);
+                    fs.writeFileSync(destFilePath, rendered, {
+                        encoding: 'utf8'
+                    });
+                    shelljs.rm(path.join(dest, fileName));
+                }
+            }
+            return true;
         }
     },
-    package: function (successCallback, errorCallback, build, dest, cliSrc){
+    package: function(successCallback, errorCallback, build, dest, cliSrc) {
         console.log('\nStart packaging Samsung Tizen TV Platform......');
 
         build = path.resolve(build);
@@ -216,20 +264,22 @@ module.exports = {
 
         var projectName = 'package';
 
-        if(fs.existsSync(userconfPath)){
+        if (fs.existsSync(userconfPath)) {
             var data = JSON.parse(fs.readFileSync(userconfPath));
 
-            if(data.hasOwnProperty('tizen')){
+            if (data.hasOwnProperty('tizen')) {
                 projectName = data.tizen.name;
             }
-        }else{
+        } else {
             grunt.log.error('Build the project first.');
         }
 
-        fs.mkdir(dest, function(){
-            zipdir(build, {saveTo: path.join(dest, projectName + '.wgt')}, function(){
+        fs.mkdir(dest, function() {
+            zipdir(build, {
+                saveTo: path.join(dest, projectName + '.wgt')
+            }, function() {
                 console.log('Packaged at ' + dest);
-                successCallback && successCallback();        
+                successCallback && successCallback();
             });
         });
 
@@ -243,26 +293,3 @@ module.exports = {
         shelljs.exec(path.join(cliSrc, 'tizen package -t wgt'));
     }
 };
-
-function saveFile() {
-    userconfData.tizen = tizenData;
-    fs.writeFileSync(userconfPath, JSON.stringify(userconfData), {encoding: 'utf8'});
-}
-
-// tizenUtil
-function updateRevision(curver) {
-    var tmp = curver.split('.');
-    var major = tmp[0];
-    var minor = tmp[1];
-    var revision = 1;
-
-    if(tmp[2]){
-        revision = parseInt(tmp[2]) + 1;
-    }
-
-    return parseInt(major) + '.' + parseInt(minor) + '.' + revision;
-}
-
-function generateTizenId(){
-    return Math.random().toString(36).substr(2,10);
-}
