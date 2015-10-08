@@ -8,6 +8,7 @@ var shelljs = require('shelljs');
 var mustache = require('mustache');
 var grunt = require('grunt');
 var zipdir = require('zip-dir');
+var child_process = require('child_process');
 
 function saveUserConfFile(configPath, tizenConf) {
     var userConfData = {};
@@ -189,7 +190,7 @@ module.exports = {
                         buildProject();
                     });
                 }
-            });
+            })
         }
         else {
             askUserData(cordovaConf, function (data) {
@@ -253,43 +254,45 @@ module.exports = {
             return true;
         }
     },
-    package: function(successCallback, errorCallback, build, dest, cliSrc) {
+    package: function(successCallback, errorCallback, data) {
         console.log('\nStart packaging Samsung Tizen TV Platform......');
+        var build = data.build || path.join('platforms', platformName, 'www');
+        var dest = data.dest || path.join('platforms', platformName, 'build');
+        var TEMPORARY_BUILD_DIR = '.buildResult';
 
         build = path.resolve(build);
         dest = path.resolve(dest);
-        cliSrc = path.resolve(cliSrc);
-
-        var userConfPath = path.join('platforms', 'userconf.json');
-
-        var projectName = 'package';
-
-        if (fs.existsSync(userConfPath)) {
-            var data = JSON.parse(fs.readFileSync(userConfPath));
-
-            if (data.hasOwnProperty('tizen')) {
-                projectName = data.tizen.name;
+        child_process.exec('tizen version', function(err, stdout, stderr) {
+            if(err) {
+                throw Error('The command \"tizen\" failed. Make sure you have the latest Tizen SDK installed, and the \"tizen\" command (inside the tools/ide/bin folder) is added to your path.');
             }
-        } else {
-            grunt.log.error('Build the project first.');
-        }
+            console.log(stdout);
 
-        fs.mkdir(dest, function() {
-            zipdir(build, {
-                saveTo: path.join(dest, projectName + '.wgt')
-            }, function() {
-                console.log('Packaged at ' + dest);
-                successCallback && successCallback();
-            });
+            // reference url : https://developer.tizen.org/development/tools/web-tools/command-line-interface#mw_package
+            var result = shelljs.exec('tizen cli-config "default.profiles.path=' + path.resolve(data.profilePath) + '"');
+            if(result.code) {
+                throw Error(result.output);
+            }
+            result = shelljs.exec('tizen build-web -out ' + TEMPORARY_BUILD_DIR + ' -- "' + path.resolve(build) + '"');
+            if(result.code) {
+                throw Error(result.output);
+            }
+            result = shelljs.exec('tizen package --type wgt --sign ' + data.profileName + ' -- ' + path.resolve(path.join(build, TEMPORARY_BUILD_DIR)));
+            if(result.code) {
+                throw Error(result.output);
+            }
+            else {
+                var packagePath = result.output.match(/Package File Location\:\s*(.*)/);
+                if(packagePath && packagePath[1]) {
+                    prepareDir(dest);
+                    shelljs.mv('-f', packagePath[1], path.resolve(dest));
+                    shelljs.rm('-rf', path.resolve(path.join(build, TEMPORARY_BUILD_DIR)));
+                    console.log("Package created at " + path.join(dest, path.basename(packagePath)));
+                }
+                else {
+                    throw Error('Fail to retrieve Package File Location.');
+                }
+            }
         });
-
-        //tizen.bat test code. please complete...........kook D......
-
-        //for testing : get tizen.bat version
-        shelljs.exec(path.join(cliSrc, 'tizen version'));
-
-        //for testing : package with wgt type
-        //url : https://developer.tizen.org/development/tools/web-tools/command-line-interface#mw_package
-        shelljs.exec(path.join(cliSrc, 'tizen package -t wgt'));
     }
 };

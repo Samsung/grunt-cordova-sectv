@@ -248,8 +248,10 @@ module.exports = {
             });
         }
     },
-    package: function (successCallback, errorCallback, build, dest){
+    package: function (successCallback, errorCallback, data){
         console.log('\nStart packaging Legacy Samsung Smart TV Platform......');
+        var build = data.build || path.join('platforms', platformName, 'www');
+        var dest = data.dest || path.join('platforms', platformName, 'build');
 
         build = path.resolve(build);
         dest = path.resolve(dest);

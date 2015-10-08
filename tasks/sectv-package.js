@@ -6,17 +6,12 @@ module.exports = function(grunt) {
     grunt.registerMultiTask('sectv-package', 'package sectv apps', function() {
         var platformName = this.target;
 
-        // path
-        var build = this.data.build || path.join('platforms', platformName, 'www');
-        var dest = this.data.dest || path.join('platforms', platformName, 'build');
-        var cliSrc = this.data.cliSrc;
-        
         var packager = require('./packager/'+platformName);
         var done = this.async();
         packager.package(function () {
             done();
         }, function () {
             done();
-        }, build, dest, cliSrc);
+        }, this.data);
     });
 };
