@@ -33,8 +33,8 @@ module.exports = function(grunt) {
                 dest: 'platforms/sectv-orsay/build'
             },
             'sectv-tizen': {
-                profilePath: "/home/TizenSDK/.metadata/.plugins/org.tizen.common.sign/profiles.xml",
-                profileName: "myprofile",
+                profilePath: '/home/TizenSDK/.metadata/.plugins/org.tizen.common.sign/profiles.xml',
+                profileName: 'myprofile',
                 build: 'platforms/sectv-tizen/www',
                 dest: 'platforms/sectv-tizen/build'
             }

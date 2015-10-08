@@ -250,8 +250,8 @@ module.exports = {
     },
     package: function (successCallback, errorCallback, data){
         console.log('\nStart packaging Legacy Samsung Smart TV Platform......');
-        var build = data.build || path.join('platforms', platformName, 'www');
-        var dest = data.dest || path.join('platforms', platformName, 'build');
+        var build = data.build || path.join('platforms', 'sectv-orsay', 'www');
+        var dest = data.dest || path.join('platforms', 'sectv-orsay', 'build');
 
         build = path.resolve(build);
         dest = path.resolve(dest);
@@ -261,12 +261,13 @@ module.exports = {
         var projectName = 'package';
 
         if(fs.existsSync(userconfPath)){
-            var data = JSON.parse(fs.readFileSync(userconfPath));
+            var userData = JSON.parse(fs.readFileSync(userconfPath));
 
-            if(data.hasOwnProperty('orsay')){
-                projectName = data.orsay.name;
+            if(userData.hasOwnProperty('orsay')){
+                projectName = userData.orsay.name;
             }
-        }else{
+        }
+        else {
             grunt.log.error('Build the project first.');
         }
 

@@ -6,9 +6,7 @@ var inquirer = require('inquirer');
 var utils = require('../lib/utils');
 var shelljs = require('shelljs');
 var mustache = require('mustache');
-var grunt = require('grunt');
-var zipdir = require('zip-dir');
-var child_process = require('child_process');
+var child = require('child_process');
 
 function saveUserConfFile(configPath, tizenConf) {
     var userConfData = {};
@@ -190,7 +188,7 @@ module.exports = {
                         buildProject();
                     });
                 }
-            })
+            });
         }
         else {
             askUserData(cordovaConf, function (data) {
@@ -256,14 +254,15 @@ module.exports = {
     },
     package: function(successCallback, errorCallback, data) {
         console.log('\nStart packaging Samsung Tizen TV Platform......');
-        var build = data.build || path.join('platforms', platformName, 'www');
-        var dest = data.dest || path.join('platforms', platformName, 'build');
+        var build = data.build || path.join('platforms', 'sectv-tizen', 'www');
+        var dest = data.dest || path.join('platforms', 'sectv-tizen', 'build');
         var TEMPORARY_BUILD_DIR = '.buildResult';
 
         build = path.resolve(build);
         dest = path.resolve(dest);
-        child_process.exec('tizen version', function(err, stdout, stderr) {
+        child.exec('tizen version', function(err, stdout, stderr) {
             if(err) {
+                console.log(stderr);
                 throw Error('The command \"tizen\" failed. Make sure you have the latest Tizen SDK installed, and the \"tizen\" command (inside the tools/ide/bin folder) is added to your path.');
             }
             console.log(stdout);
@@ -287,7 +286,7 @@ module.exports = {
                     prepareDir(dest);
                     shelljs.mv('-f', packagePath[1], path.resolve(dest));
                     shelljs.rm('-rf', path.resolve(path.join(build, TEMPORARY_BUILD_DIR)));
-                    console.log("Package created at " + path.join(dest, path.basename(packagePath)));
+                    console.log('Package created at ' + path.join(dest, path.basename(packagePath)));
                 }
                 else {
                     throw Error('Fail to retrieve Package File Location.');

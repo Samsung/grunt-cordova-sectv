@@ -1,7 +1,5 @@
 'use strict';
 
-var path = require('path');
-
 module.exports = function(grunt) {
     grunt.registerMultiTask('sectv-package', 'package sectv apps', function() {
         var platformName = this.target;
