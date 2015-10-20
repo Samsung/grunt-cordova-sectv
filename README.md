@@ -7,11 +7,11 @@ It provides several grunt task:
 * `sectv-build`: Creates application project for each platforms from your cordova project.
     * Options for the task:
         ```
-        'sectv-build': {	// task
-            'sectv-orsay': {	// target
-                dest: 'platforms/sectv-orsay/www',	// Destination path to create the application project.
-                platformRepos: '../cordova-sectv-orsay',	// Path to 'sectv-***` cordova platform's repository.
-                scripts: {	// copy the scripts to the application project
+        'sectv-build': {    // task
+            'sectv-orsay': {    // target
+                dest: 'platforms/sectv-orsay/www',  // Destination path to create the application project.
+                platformRepos: '../cordova-sectv-orsay',    // Path to 'sectv-***` cordova platform's repository.
+                scripts: {  // copy the scripts to the application project
                     'cordova.js': '../cordova-js/pkg/cordova.sectv-orsay.js',
                     'toast.js': '../cordova-plugin-toast/platform_www/sectv-orsay/toast.js'
                 }
@@ -21,10 +21,10 @@ It provides several grunt task:
 * `sectv-package`: Packaging the application project into each platforms package file format like `.zip` or `.wgt`.
     * Options for the task:
         ```
-        'sectv-package': {	// task
-            'sectv-orsay': {	// target
-                build: 'platforms/sectv-orsay/www',	// Path to Application project
-                dest: 'platforms/sectv-orsay/build'	// Directory to create the package
+        'sectv-package': {  // task
+            'sectv-orsay': {    // target
+                build: 'platforms/sectv-orsay/www', // Path to Application project
+                dest: 'platforms/sectv-orsay/build' // Directory to create the package
             }
         }
         ```
@@ -59,6 +59,17 @@ $ grunt sectv-build:<platform>
 * `<platform>` can be one of `sectv-orsay` and `sectv-tizen`. If you want to build both of them:
 ```
 $ grunt sectv-build
+```
+* For more details, please see the `sample/Gruntfile.js` of this project, Not `Gruntfile.js` in this project's root :).
+
+# How to package the application by platforms
+* In the cordova project's root:
+```
+$ grunt sectv-package:<platform>
+```
+* `<platform>` can be one of `sectv-orsay` and `sectv-tizen`. If you want to build both of them:
+```
+$ grunt sectv-package
 ```
 * For more details, please see the `sample/Gruntfile.js` of this project, Not `Gruntfile.js` in this project's root :).
 
