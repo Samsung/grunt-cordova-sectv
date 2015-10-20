@@ -61,6 +61,7 @@ $ grunt sectv-build:<platform>
 $ grunt sectv-build
 ```
 * For more details, please see the `sample/Gruntfile.js` of this project, Not `Gruntfile.js` in this project's root :).
+* You can input the information for your application through interactive cli: name, resolution, category, version, description, author, etc.
 
 # How to package the application by platforms
 * In the cordova project's root:
