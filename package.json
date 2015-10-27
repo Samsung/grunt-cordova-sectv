@@ -7,7 +7,7 @@
     "url": "http://sec.co.kr"
   },
   "repository": "samsung/grunt-cordova-sectv",
-  "license": "MIT",
+  "license": "Apache 2.0",
   "engines": {
     "node": ">=0.10.0"
   },
@@ -26,11 +26,5 @@
   ],
   "files": [
     "tasks"
-  ],
-  "contributors": [
-    {
-      "name": "Kookheon Kim",
-      "email": "kookheon.kim@samsung.com"
-    }
   ]
 }
