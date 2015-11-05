@@ -25,283 +25,71 @@ var mustache = require('mustache');
 var grunt = require('grunt');
 var zipdir = require('zip-dir');
 
-var userconfData = {};
-var orsayData = {};
-var userconfPath = '';
-
-var minLen = 2;
 var revLen = 3;
 
-module.exports = {
-    build: function (successCallback, errorCallback, wwwSrc, dest, platformRepos, scripts) {
-        console.log('\nStart Building Legacy Samsung Smart TV Platform......');
-
-        // file path
-        wwwSrc = path.resolve(wwwSrc);
-        dest = path.resolve(dest);
-        platformRepos = path.resolve(platformRepos);
-        userconfPath = path.join('platforms', 'userconf.json');
-
-        // config
-        var cordovaConf = utils.getCordovaConfig();
-
-        if(!(fs.existsSync(userconfPath))){
-            // userconf.json is not exists
-            inputNewData();
-        }
-        else{
-            // userconf.json is already exists
-            userconfData = JSON.parse(fs.readFileSync(userconfPath));
-            
-            if(!(userconfData.hasOwnProperty('orsay'))){
-                // userconf.json is empty
-                console.log('\'userconf.json\' is empty. Please fill out the information again.');
-                inputNewData();
-            }
-            else{
-                // userconf.json has data
-                orsayData = userconfData.orsay;
-                var curVer = orsayData.version;
-                var tmp = curVer.split('.');
-
-                var i = 0 ;
-                for(i = 0; i < tmp.length; i++){
-                    if(isNaN(tmp[i])){
-                        break;
-                    }
-                }
-                
-                if((i != tmp.length) || (tmp.length > 3) || (tmp.length < 2)){
-                    // version is invalid
-                    console.log('\'userconf.json\' has invalid data. Please fill out the information again.');
-                    inputNewData();
-                }
-                else{
-                    // version is valid
-                    var updateVer = updateRevision(curVer);
-                    var data = orsayData;
-
-                    console.log('');
-                    console.log('      > [ Current Information ]');
-                    console.log('      > name        : ' + data.name);
-                    console.log('      > resolution  : ' + data.resolution);
-                    console.log('      > category    : ' + data.category);
-                    console.log('      > version     : ' + data.version);
-                    console.log('      > description : ' + data.description);
-
-                    var cacheAsk = [{
-                        type: 'confirm',
-                        name: 'cache',
-                        message: 'Already have \'userconf.json\', Do you want to use this data?'
-                    }, {
-                        when: function(response){
-                            return response.cache;
-                        },
-                        type: 'input',
-                        name: 'revision',
-                        message: '(current version is '+curVer+ '), Application version',
-                        default: updateVer,
-                        validate: function(input) {
-                            return /^[0-9]+\.[0-9]+$/.test(input) ? true : 'invalid version string for orsay platform';
-                        }
-                    }];
-
-                    inquirer.prompt(cacheAsk, function(answers){
-                        if(answers.cache){
-                            // use cache data
-                            data.version = answers.revision;
-
-                            orsayData = data;
-                            buildProject();
-                        }else{
-                            // input new data
-                            inputNewData();        
-                        }
-                    });
-                }
-            }
-        }
-
-        function copySrcToDest() {
-            var tmp = dest.split(path.sep);
-            
-            var curPath = tmp[0];
-            for(var i=1; i<tmp.length; i++) {
-                curPath = path.join(curPath, tmp[i]);
-                !fs.existsSync(curPath) && fs.mkdirSync(curPath);
-            }
-
-            for(var key in scripts){
-                if(scripts.hasOwnProperty(key)){
-                    var to = path.join(dest, key);
-                    var from = path.resolve(scripts[key]);
-
-                    shelljs.cp('-f', from, to);
-                }
-            }
-
-            shelljs.cp('-rf', path.join(wwwSrc, '*'), dest);
-
-            if(cordovaConf.contentSrc !== 'index.html') {
-                if(fs.existsSync(path.join(dest, 'index.html'))) {
-                    grunt.log.error('Initial content, which is pointed by \'content\' tag in the \'config.xml\'), is not \'index.html\', but another \'index.html\' is already exist in the source!');
-                    return false;
-                }
-                shelljs.mv(path.join(dest, cordovaConf.contentSrc), path.join(dest, 'index.html'));
-            }
-
-            return true;
-        }           
-
-        function buildPlatformAdditions() {
-            shelljs.cp('-rf', path.join(platformRepos, 'www', '*'), dest);
-
-            // replace config.xml template with actual configuration
-            replaceTemplate('config.xml.tmpl');
-                        
-            // replace widget.info template with actual configuration
-            replaceTemplate('widget.info.tmpl');
-
-            // replace .project template with actual configuration
-            // .project is hidden file in linux
-            replaceTemplate('project.tmpl', true);
-
-            return true;
-        }
-
-        function replaceTemplate(filename, isHidden) {
-            // replace config.xml template with actual configuration
-            var data = orsayData;
-
-            var tmplFile = fs.readFileSync(path.join(dest, filename), {encoding: 'utf8'});
-            var rendered = mustache.render(tmplFile, data);
-            var removal = '.tmpl';
-            var resultFile = filename.substring(0, filename.length - removal.length);
-
-            fs.writeFileSync(path.join(dest, filename + '.tmp'), rendered, {encoding: 'utf8'});
-                                    
-            //hidden file.......
-            if(isHidden){
-                resultFile =  '.'+resultFile;
-            }
-            
-            shelljs.mv('-f', path.join(dest, filename + '.tmp'), path.join(dest, resultFile));
-            shelljs.rm('-f', path.join(dest, filename));
-        }
-
-        function buildProject() {
-            copySrcToDest() || (errorCallback && errorCallback());
-            buildPlatformAdditions() || (errorCallback && errorCallback());
-
-            saveFile();
-
-            console.log('Built at ' + dest);
-            successCallback && successCallback();
-        }
-
-        function inputNewData() {
-            var choice = [{
-                type: 'input',
-                name: 'name',
-                message: 'What\'s the application\'s name?',
-                default: cordovaConf.name
-            }, {
-                type: 'list',
-                name: 'resolution',
-                message: 'Which resolution does your application developed for?',
-                default: '960x540',
-                choices: [
-                    '960x540',
-                    '1280x720',
-                    '1920x1080'
-                ]
-            }, {
-                type: 'list',
-                name: 'category',
-                message: 'What\'s the application\'s category?',
-                choices: [
-                    'VOD', 'sports', 'game', 'lifestyle', 'information', 'education'
-                ]
-            }, {
-                type: 'input',
-                name: 'version',
-                message: 'Application Version(Valid RegExp: ^[0-9]+\.[0-9]+$)',
-                default: semVer2OrsayVer(cordovaConf.version),
-                validate: function(input) {
-                    return /^[0-9]+\.[0-9]+$/.test(input) ? true : 'invalid version string for orsay platform';
-                }
-            }, {
-                type: 'input',
-                name: 'description',
-                message: 'Application Description',
-                default: cordovaConf.description
-            }, {
-                type: 'input',
-                name: 'authorName',
-                message: 'Author\'s name',
-                default: cordovaConf.authorName
-            }, {
-                type: 'input',
-                name: 'authorEmail',
-                message: 'Author\'s email',
-                default: cordovaConf.authorEmail
-            }, {
-                type: 'input',
-                name: 'authorHref',
-                message: 'Author\'s IRI(href)',
-                default: cordovaConf.authorHref
-            }];
-
-            inquirer.prompt(choice, function (answers) {
-                var config = answers;
-
-                var tmp = config.resolution.split('x');
-                config.resWidth = parseInt(tmp[0], 10);
-                config.resHeight = parseInt(tmp[1], 10);
-
-                orsayData = config;
-                buildProject();
-            });
-        }
-    },
-    package: function (successCallback, errorCallback, data){
-        console.log('\nStart packaging Legacy Samsung Smart TV Platform......');
-        var build = data.build || path.join('platforms', 'sectv-orsay', 'www');
-        var dest = data.dest || path.join('platforms', 'sectv-orsay', 'build');
-
-        build = path.resolve(build);
-        dest = path.resolve(dest);
-
-        userconfPath = path.join('platforms', 'userconf.json');
-
-        var projectName = 'package';
-
-        if(fs.existsSync(userconfPath)){
-            var userData = JSON.parse(fs.readFileSync(userconfPath));
-
-            if(userData.hasOwnProperty('orsay')){
-                projectName = userData.orsay.name;
-            }
-        }
-        else {
-            grunt.log.error('Build the project first.');
-        }
-
-        fs.mkdir(dest, function(){
-            zipdir(build, {saveTo: path.join(dest, projectName + '.zip')}, function(){
-                console.log('Packaged at ' + dest);
-                successCallback && successCallback();        
-            });
-        });
+function saveUserConfFile(configPath, orsayConf) {
+    var userConfData = {};
+    if (fs.existsSync(configPath)) {
+        userConfData = JSON.parse(fs.readFileSync(configPath));
     }
-};
-
-function saveFile() {
-    userconfData.orsay = orsayData;
-    fs.writeFileSync(userconfPath, JSON.stringify(userconfData), {encoding: 'utf8'});
+    userConfData.orsay = orsayConf;
+    fs.writeFileSync(configPath, JSON.stringify(userConfData, null, 2), {
+        encoding: 'utf8'
+    });
 }
 
-// OrsayUtil
+function getNextVersion(curver) {    // just increase revision
+    var tmp = curver.split('.');
+    var major = tmp[0];
+    var minor = tmp[1].substring(0, tmp[1].length - revLen);
+    var rev = tmp[1].substr(tmp[1].length - revLen);
+    rev = parseInt(rev) + 1;
+
+    return semVer2OrsayVer(major + '.' + minor + '.' + rev);
+}
+
+function getValidOrsayConfData(configPath) {
+    console.log(configPath);
+    if (!(fs.existsSync(configPath))) {
+        // userconf.json is not exists
+        return null;
+    }
+    // userconf.json is already exists
+    var userConfData = JSON.parse(fs.readFileSync(configPath));
+
+    if (!(userConfData.hasOwnProperty('orsay'))) {
+        // userconf.json doesn't have orsay data
+        return null;
+    }
+    var orsayData = userConfData.orsay;
+    if (typeof orsayData.name !== 'string' || orsayData.name.length <= 0) {
+        // name is invalid
+        return null;
+    }
+    if (!validateOrsayVersion(orsayData.version)) {
+        // version is invalid
+        return null;
+    }
+    // description is not mendatory
+
+    return orsayData;
+}
+
+function validateOrsayVersion(version) {
+    var tmp = version.split('.'),
+        i;
+    if (tmp.length !== 2) {
+        return false;
+    }
+    for (i = 0; i < tmp.length; i++) {
+        if (isNaN(tmp[i])) {
+            return false;
+        }
+    }
+
+    return i === tmp.length;
+}
+
 function semVer2OrsayVer(semver) {
     var LEN_MINOR = 2;
     var LEN_REV = 3;
@@ -322,19 +110,253 @@ function semVer2OrsayVer(semver) {
     minor = tmp[1].length > LEN_MINOR ? tmp[1] : minor.substr(Math.max(minor.length-LEN_MINOR,LEN_MINOR));
     rev = tmp[2].length > LEN_REV ? tmp[2] : rev.substr(Math.max(rev.length-LEN_REV,LEN_REV));
 
-    minLen = minor.length;
     revLen = rev.length;
-
+    
     return major + '.' + minor + rev;
 }
 
-function updateRevision(curver) {
-    var tmp = curver.split('.');
-    
-    var major = tmp[0];
-    var minor = tmp[1].substring(0, tmp[1].length - revLen);
-    var rev = tmp[1].substr(tmp[1].length - revLen);
-    rev = parseInt(rev) + 1;
+function confirmUseExistingData(userData, callback) {
+    console.log('');
+    console.log('      > [ Stored Information ]');
+    console.log('      > name        : ' + userData.name);
+    console.log('      > resolution  : ' + userData.resolution);
+    console.log('      > category    : ' + userData.category);
+    console.log('      > version     : ' + userData.version);
+    console.log('      > description : ' + userData.description);
 
-    return semVer2OrsayVer(major + '.' + minor + '.' + rev);
+    var ask = [{
+        type: 'confirm',
+        name: 'useExisting',
+        message: 'Already have \'userconf.json\', Do you want to use this data?'
+    }];
+
+    inquirer.prompt(ask, function(answers) {
+        callback(!!answers.useExisting);
+    });
 }
+
+function askUserData(cordovaConf, callback, versionOnly, userData) {
+    var ask;
+    if(versionOnly) {
+        var curVer = userData.version;
+        var updateVer = getNextVersion(userData.version);
+        ask = [{
+            type: 'input',
+            name: 'version',
+            message: 'current version is '+curVer+ '. Application version: ',
+            default: updateVer,
+            validate: function(input) {
+                return /^[0-9]+\.[0-9]+$/.test(input) ? true : 'invalid version string for orsay platform';
+            }
+        }];
+        inquirer.prompt(ask, function(answers) {
+            callback(answers);
+        });
+    }
+    else {
+        ask = [{
+            type: 'input',
+            name: 'name',
+            message: 'What\'s the application\'s name?',
+            default: cordovaConf.name
+        }, {
+            type: 'list',
+            name: 'resolution',
+            message: 'Which resolution does your application developed for?',
+            default: '960x540',
+            choices: [
+                '960x540',
+                '1280x720',
+                '1920x1080'
+            ]
+        }, {
+            type: 'list',
+            name: 'category',
+            message: 'What\'s the application\'s category?',
+            choices: [
+                'VOD', 'sports', 'game', 'lifestyle', 'information', 'education'
+            ]
+        }, {
+            type: 'input',
+            name: 'version',
+            message: 'Application Version(Valid RegExp: ^[0-9]+\.[0-9]+$)',
+            default: semVer2OrsayVer(cordovaConf.version),
+            validate: function(input) {
+                return /^[0-9]+\.[0-9]+$/.test(input) ? true : 'invalid version string for orsay platform';
+            }
+        }, {
+            type: 'input',
+            name: 'description',
+            message: 'Application Description',
+            default: utils.trim(cordovaConf.description)
+        }, {
+            type: 'input',
+            name: 'authorName',
+            message: 'Author\'s name',
+            default: cordovaConf.authorName
+        }, {
+            type: 'input',
+            name: 'authorEmail',
+            message: 'Author\'s email',
+            default: cordovaConf.authorEmail
+        }, {
+            type: 'input',
+            name: 'authorHref',
+            message: 'Author\'s IRI(href)',
+            default: cordovaConf.authorHref
+        }];
+        inquirer.prompt(ask, function(answers) {
+            var config = answers;
+
+            var tmp = config.resolution.split('x');
+            config.resWidth = parseInt(tmp[0], 10);
+            config.resHeight = parseInt(tmp[1], 10);
+            answers = config;
+
+            callback(answers);
+        });
+    }
+}
+
+function prepareDir(dir) {
+    dir = path.resolve(dir);
+    var tmp = dir.split(path.sep);
+    var curPath = tmp[0];
+    for (var i=1; i<tmp.length; i++) {
+        curPath = path.join(curPath, tmp[i]);
+        if (!fs.existsSync(curPath)) {
+            fs.mkdirSync(curPath);
+        }
+    }
+}
+
+module.exports = {
+    build: function (successCallback, errorCallback, wwwSrc, dest, platformRepos, scripts) {
+        console.log('\nStart building Legacy Samsung Smart TV Platform......');
+
+        // file path
+        wwwSrc = path.resolve(wwwSrc);
+        dest = path.resolve(dest);
+        platformRepos = path.resolve(platformRepos);
+        var userConfPath = path.join('platforms', 'userconf.json');
+
+        // config
+        var cordovaConf = utils.getCordovaConfig();
+        var userData = getValidOrsayConfData(userConfPath);
+        if(userData) {
+            confirmUseExistingData(userData, function (useExisting) {
+                if(useExisting) {
+                    askUserData(cordovaConf, function (data) {
+                        userData.version = data.version;
+                        buildProject();
+                    }, true, userData);
+                }
+                else {
+                    askUserData(cordovaConf, function (data) {
+                        userData = data;
+                        buildProject();
+                    });
+                }
+            });
+        }
+        else {
+            askUserData(cordovaConf, function (data) {
+                userData = data;
+                buildProject();
+            });
+        }
+
+        function buildProject() {
+            copySrcToDest() || (errorCallback && errorCallback());
+            buildPlatformAdditions() || (errorCallback && errorCallback());
+            replaceTemplates() || (errorCallback && errorCallback());
+            console.log('Built at ' + dest);
+
+            saveUserConfFile(userConfPath, userData);
+            successCallback && successCallback();
+        }
+
+        function copySrcToDest() {
+            prepareDir(dest);
+
+            for (var key in scripts) {
+                if (scripts.hasOwnProperty(key)) {
+                    var to = path.join(dest, key);
+                    var from = path.resolve(scripts[key]);
+                    shelljs.cp('-f', from, to);
+                }
+            }
+
+            shelljs.cp('-rf', path.join(wwwSrc, '*'), dest);
+
+            if(cordovaConf.contentSrc !== 'index.html') {
+                if(fs.existsSync(path.join(dest, 'index.html'))) {
+                    grunt.log.error('Initial content, which is pointed by \'content\' tag in the \'config.xml\'), is not \'index.html\', but another \'index.html\' is already exist in the source!');
+                    return false;
+                }
+                shelljs.mv(path.join(dest, cordovaConf.contentSrc), path.join(dest, 'index.html'));
+            }
+
+            return true;
+        }
+
+        function buildPlatformAdditions() {
+            shelljs.cp('-rf', path.join(platformRepos, 'www', '*'), dest);
+            // hack: copying hidden files(starts with dot) at root('www') to the dest directory.
+            // if the dest is not exist, we can copy the platform files without this hack by using this command: cp -rf <PLATFORMREPOS>/www <destDir>
+            // But the dest directory has the application files at this moment. So we need to use this hack.
+            shelljs.cp('-rf', path.join(platformRepos, 'www', '.*'), dest);
+            return true;
+        }
+
+        function replaceTemplates() {
+            var files = fs.readdirSync(dest);
+            for(var i=0; i<files.length; i++) {
+                var fileName = files[i];
+                if(fileName.match(/\.tmpl$/)) {
+                    var tmplFilePath = path.join(dest, fileName);
+                    var destFilePath = path.join(dest, fileName.replace(/\.tmpl$/, ''));
+                    var template = fs.readFileSync(tmplFilePath, {
+                        encoding: 'utf8'
+                    });
+                    var rendered = mustache.render(template, userData);
+                    fs.writeFileSync(destFilePath, rendered, {
+                        encoding: 'utf8'
+                    });
+                    shelljs.rm(path.join(dest, fileName));
+                }
+            }
+            return true;
+        }
+    },
+    package: function (successCallback, errorCallback, data){
+        console.log('\nStart packaging Legacy Samsung Smart TV Platform......');
+        var build = data.build || path.join('platforms', 'sectv-orsay', 'www');
+        var dest = data.dest || path.join('platforms', 'sectv-orsay', 'build');
+
+        build = path.resolve(build);
+        dest = path.resolve(dest);
+
+        var userConfPath = path.join('platforms', 'userconf.json');
+
+        var projectName = 'package';
+
+        if(fs.existsSync(userConfPath)){
+            var userData = JSON.parse(fs.readFileSync(userConfPath));
+
+            if(userData.hasOwnProperty('orsay')){
+                projectName = userData.orsay.name;
+            }
+        }
+        else {
+            grunt.log.error('Build the project first.');
+        }
+
+        fs.mkdir(dest, function(){
+            zipdir(build, {saveTo: path.join(dest, projectName + '.zip')}, function(){
+                console.log('Package created at ' + path.join(dest, projectName));
+                successCallback && successCallback();
+            });
+        });
+    }
+};
