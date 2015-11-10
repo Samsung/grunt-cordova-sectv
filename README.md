@@ -56,6 +56,10 @@ $ npm install grunt-cordova-sectv
     ```
     `grunt-cordova-sectv` will be installed also since the `sample/pacakge.json` defines it as a dependency.
 
+# Supported platform
+* sectv-orsay
+* sectv-tizen
+
 # How to build the application by platforms
 * In the cordova project's root:
 
@@ -63,7 +67,7 @@ $ npm install grunt-cordova-sectv
     $ grunt sectv-build:<platform>
     ```
 
-* `<platform>` can be one of `sectv-orsay` and `sectv-tizen`. If you want to build both of them:
+* `<platform>` can be one of supported platforms. If you want to build all platforms:
 
     ```sh
     $ grunt sectv-build
@@ -72,15 +76,16 @@ $ npm install grunt-cordova-sectv
 * For more details, please see the `sample/Gruntfile.js` of this project.
 
 # How to package the application by platforms
-* Preparing for packaging `sectv-tizen`
-    - Install Tizen SDK 2.0 or higher
-        * http://www.samsungdforum.com/TizenDevtools/SdkDownload
-    - Set the path and environment variables
-        * C:\tizen-sdk\tools\ide\bin
-    - Fill out your `filePath` and `profileName`
-        * In the cordova project's root/Gruntfile.js:
+* Packaging for `sectv-tizen`
+    - Set the path of environment variables
+
+        ```./
+        C:\tizen-sdk\tools\ide\bin
+        ```
+    - In the cordova project's root/Gruntfile.js:
 
         ```js
+        // Fill out your 'filePath' and 'profileName'
         'sectv-tizen': {
             filePath: '/home/TizenSDK/.metadata/.plugins/org.tizen.common.sign/profiles.xml',
             profileName: 'myprofile',
@@ -88,16 +93,17 @@ $ npm install grunt-cordova-sectv
             dest: 'platforms/sectv-tizen/build'
         }
         ```
+    - filePath
+        - In the SDK workspace:
 
-        1. `filePath`
-            - In the IDE workspace:
-                - replace path to `<yourWorkspace>/.metadata/.plugins/org.tizen.common.sign/profiles.xml`
-        2. `profileName`
-            - In the IDE:
-                - Window > Preferences > Tizen SDK > Security Profiles
-                - profileName : Activated Profiles name
-        - If you couldn't find `profiles.xml`, please refer `How to share Author Certificate` 
-            - http://www.samsungdforum.com/TizenGuide/?FolderName=tizen3531&FileName=index.html
+        ```./
+        <yourWorkspace>/.metadata/.plugins/org.tizen.common.sign/profiles.xml
+        ```
+    - profileName
+        - In the SDK:  
+            - window > Preferences > Tizen SDK > Security Profiles
+            - `profileName`: Activated Profile name
+    - If you couldn't find `profiles.xml`, please refer [How to share Author Certificate](http://www.samsungdforum.com/TizenGuide/?FolderName=tizen3531&FileName=index.html)
  
 * In the cordova project's root:
 
@@ -105,10 +111,12 @@ $ npm install grunt-cordova-sectv
     $ grunt sectv-package:<platform>
     ```
 
-* `<platform>` can be one of `sectv-orsay` and `sectv-tizen`. If you want to package both of them:
+* `<platform>` can be one of supported platforms. If you want to package all platforms:
+
     ```sh
     $ grunt sectv-package
     ```
+    
 * For more details, please see the `sample/Gruntfile.js` of this project.
 
 # Known Issues
