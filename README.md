@@ -121,3 +121,5 @@ $ npm install grunt-cordova-sectv
 
 # Known Issues
 Not yet
+
+[![Analytics](https://ga-beacon.appspot.com/UA-70262254-1/grunt-cordova-sectv/README)](https://github.com/igrigorik/ga-beacon)
