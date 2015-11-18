@@ -136,7 +136,10 @@ function askUserData(cordovaConf, callback, versionOnly, userData) {
             type: 'input',
             name: 'name',
             message: 'What\'s the application\'s name?',
-            default: cordovaConf.name
+            default: cordovaConf.name,
+            validate: function(input) {
+                return /^[a-zA-Z][^~!\.\;\\\/\|\"\'@\#$%<>^&*\()\-=+_\’\n\t\s]*$/.test(input) ? true : 'invalid name for tizen platform';
+            }
         }, {
             type: 'input',
             name: 'packageid',
@@ -148,7 +151,7 @@ function askUserData(cordovaConf, callback, versionOnly, userData) {
         }, {
             type: 'input',
             name: 'version',
-            message: 'Application Version(Valid RegExp: /\d./\d./\d)',
+            message: 'Application Version (Valid RegExp: /\d./\d./\d)',
             default: cordovaConf.version,
             validate: function(input) {
                 return /\d.\d.\d/.test(input) ? true : 'invalid version string for tizen platform';
