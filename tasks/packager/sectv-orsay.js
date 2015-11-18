@@ -158,7 +158,10 @@ function askUserData(cordovaConf, callback, versionOnly, userData) {
             type: 'input',
             name: 'name',
             message: 'What\'s the application\'s name?',
-            default: cordovaConf.name
+            default: cordovaConf.name,
+            validate: function(input) {
+                return /^[a-zA-Z][^~!\.\;\\\/\|\"\'@\#$%<>^&*\()\-=+_\’\n\t\s]*$/.test(input) ? true : 'invalid name for orsay platform';
+            }
         }, {
             type: 'list',
             name: 'resolution',
