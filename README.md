@@ -32,9 +32,9 @@ It provides several grunt task:
         ```
 
 # Associated Projects
-* [cordova-sectv-orsay](/Samsung/cordova-sectv-orsay) is an application library that allows for [Cordova](http://cordova.apache.org)-based projects to be built for the Legacy Samsung Smart TV (A.K.A Orsay) Platform.
-* [cordova-sectv-tizen](/Samsung/cordova-sectv-tizen) is an application library that allows for [Cordova](http://cordova.apache.org)-based projects to be built for the 2015's Samsung Tizen TV Platform.
-* [cordova-plugin-toast](/Samsung/cordova-plugin-toast) is an [Cordova](http://cordova.apache.org) plugin that provides TV Specific functionalities for Smart TV application.
+* [cordova-sectv-orsay](http://github.com/Samsung/cordova-sectv-orsay) is an application library that allows for [Cordova](http://cordova.apache.org)-based projects to be built for the Legacy Samsung Smart TV (A.K.A Orsay) Platform.
+* [cordova-sectv-tizen](http://github.com/Samsung/cordova-sectv-tizen) is an application library that allows for [Cordova](http://cordova.apache.org)-based projects to be built for the 2015's Samsung Tizen TV Platform.
+* [cordova-plugin-toast](http://github.com/Samsung/cordova-plugin-toast) is an [Cordova](http://cordova.apache.org) plugin that provides TV Specific functionalities for Smart TV application.
 
 # Installation
 ```sh
