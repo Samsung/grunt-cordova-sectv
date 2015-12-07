@@ -25,7 +25,7 @@ module.exports = function(grunt) {
         // path
         var wwwSrc = path.normalize(this.data.src || ('./www'));
         var dest = this.data.dest || path.join('platforms', platformName, 'www');
-        var platformRepos = this.data.platformRepos || ('../cordova-sectv-' + platformName);
+        var platformRepos = this.data.platformRepos || ('../cordova-' + platformName);
         var scripts = this.data.scripts;
 
         var packager = require('./packager/'+platformName);
