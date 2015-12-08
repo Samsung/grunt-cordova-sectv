@@ -222,6 +222,18 @@ module.exports = {
             replaceTemplates() || (errorCallback && errorCallback());
             console.log('Built at ' + dest);
 
+            // warning for existing meta tag for csp setting
+            var targetFile = path.join(wwwSrc, 'index.html');
+            var target = fs.readFileSync(targetFile, {
+                encoding: 'utf8'
+            });
+
+            if(target.match(/(<meta.*)(http-equiv)(.*=*.)("Content-Security-Policy"|'Content-Security-Policy')/)) {
+                console.log('\nWARNING!!!!! REMOVE meta tag for csp setting in the "index.html"');
+                console.log('It would be caused abnormal operation. It is recommended to add csp setting in config.xml.');
+                console.log('Please confirm your file : ' + targetFile);
+            }
+
             saveUserConfFile(userConfPath, userData);
             successCallback && successCallback();
         }
