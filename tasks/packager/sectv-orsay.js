@@ -234,8 +234,8 @@ function prepareDir(dir) {
 }
 
 module.exports = {
-    build: function (successCallback, errorCallback, wwwSrc, dest, platformRepos, scripts) {
-        console.log('\nStart building Legacy Samsung Smart TV Platform......');
+    prepare: function (successCallback, errorCallback, wwwSrc, dest, platformRepos, scripts) {
+        console.log('\nStart preparing codes for Legacy Samsung Smart TV Platform......');
 
         // file path
         wwwSrc = path.resolve(wwwSrc);
@@ -273,7 +273,7 @@ module.exports = {
             copySrcToDest() || (errorCallback && errorCallback());
             buildPlatformAdditions() || (errorCallback && errorCallback());
             replaceTemplates() || (errorCallback && errorCallback());
-            console.log('Built at ' + dest);
+            console.log('Prepared at ' + dest);
 
             // warning for existing meta tag for csp setting
             var targetFile = path.join(wwwSrc, 'index.html');
@@ -344,12 +344,12 @@ module.exports = {
             return true;
         }
     },
-    package: function (successCallback, errorCallback, data){
+    build: function (successCallback, errorCallback, data){
         console.log('\nStart packaging Legacy Samsung Smart TV Platform......');
-        var build = data.build || path.join('platforms', 'sectv-orsay', 'www');
+        var www = data.www || path.join('platforms', 'sectv-orsay', 'www');
         var dest = data.dest || path.join('platforms', 'sectv-orsay', 'build');
 
-        build = path.resolve(build);
+        www = path.resolve(www);
         dest = path.resolve(dest);
 
         var userConfPath = path.join('platforms', 'userconf.json');
@@ -364,11 +364,11 @@ module.exports = {
             }
         }
         else {
-            grunt.log.error('Build the project first.');
+            grunt.log.error('Prepare the project first.');
         }
 
         fs.mkdir(dest, function(){
-            zipdir(build, {saveTo: path.join(dest, projectName + '.zip')}, function(){
+            zipdir(www, {saveTo: path.join(dest, projectName + '.zip')}, function(){
                 console.log('Package created at ' + path.join(dest, projectName));
                 successCallback && successCallback();
             });

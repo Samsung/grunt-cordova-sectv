@@ -16,16 +16,24 @@
 
 'use strict';
 
+var path = require('path');
+
 module.exports = function(grunt) {
-    grunt.registerMultiTask('sectv-package', 'package sectv apps', function() {
+    grunt.registerMultiTask('sectv-prepare', 'prepare sectv apps', function() {
         var platformName = this.target;
+
+        // path
+        var wwwSrc = path.normalize(this.data.src || ('./www'));
+        var dest = this.data.dest || path.join('platforms', platformName, 'www');
+        var platformRepos = this.data.platformRepos || ('../cordova-' + platformName);
+        var scripts = this.data.scripts;
 
         var packager = require('./packager/'+platformName);
         var done = this.async();
-        packager.package(function () {
+        packager.prepare(function () {
             done();
         }, function () {
             done();
-        }, this.data);
+        }, wwwSrc, dest, platformRepos, scripts);
     });
 };

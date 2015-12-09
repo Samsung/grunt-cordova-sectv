@@ -181,8 +181,8 @@ function prepareDir(dir) {
 }
 
 module.exports = {
-    build: function(successCallback, errorCallback, wwwSrc, dest, platformRepos, scripts) {
-        console.log('\nStart building Samsung Tizen Platform......');
+    prepare: function(successCallback, errorCallback, wwwSrc, dest, platformRepos, scripts) {
+        console.log('\nStart preparing codes for Samsung Tizen Platform......');
 
         // file path
         wwwSrc = path.resolve(wwwSrc);
@@ -220,7 +220,7 @@ module.exports = {
             copySrcToDest() || (errorCallback && errorCallback());
             buildPlatformAdditions() || (errorCallback && errorCallback());
             replaceTemplates() || (errorCallback && errorCallback());
-            console.log('Built at ' + dest);
+            console.log('Prepared at ' + dest);
 
             // warning for existing meta tag for csp setting
             var targetFile = path.join(wwwSrc, 'index.html');
@@ -283,13 +283,13 @@ module.exports = {
             return true;
         }
     },
-    package: function(successCallback, errorCallback, data) {
+    build: function(successCallback, errorCallback, data) {
         console.log('\nStart packaging Samsung Tizen TV Platform......');
-        var build = data.build || path.join('platforms', 'sectv-tizen', 'www');
+        var www = data.www || path.join('platforms', 'sectv-tizen', 'www');
         var dest = data.dest || path.join('platforms', 'sectv-tizen', 'build');
         var TEMPORARY_BUILD_DIR = '.buildResult';
 
-        build = path.resolve(build);
+        www = path.resolve(www);
         dest = path.resolve(dest);
         child.exec('tizen version', function(err, stdout, stderr) {
             if(err) {
@@ -303,11 +303,11 @@ module.exports = {
             if(result.code) {
                 throw Error(result.output);
             }
-            result = shelljs.exec('tizen build-web -out ' + TEMPORARY_BUILD_DIR + ' -- "' + path.resolve(build) + '"');
+            result = shelljs.exec('tizen build-web -out ' + TEMPORARY_BUILD_DIR + ' -- "' + path.resolve(www) + '"');
             if(result.code) {
                 throw Error(result.output);
             }
-            result = shelljs.exec('tizen package --type wgt --sign ' + data.profileName + ' -- ' + path.resolve(path.join(build, TEMPORARY_BUILD_DIR)));
+            result = shelljs.exec('tizen package --type wgt --sign ' + data.profileName + ' -- ' + path.resolve(path.join(www, TEMPORARY_BUILD_DIR)));
             if(result.code) {
                 throw Error(result.output);
             }
@@ -316,7 +316,7 @@ module.exports = {
                 if(packagePath && packagePath[1]) {
                     prepareDir(dest);
                     shelljs.mv('-f', packagePath[1], path.resolve(dest));
-                    shelljs.rm('-rf', path.resolve(path.join(build, TEMPORARY_BUILD_DIR)));
+                    shelljs.rm('-rf', path.resolve(path.join(www, TEMPORARY_BUILD_DIR)));
                     console.log('Package created at ' + path.join(dest, path.basename(packagePath)));
                 }
                 else {

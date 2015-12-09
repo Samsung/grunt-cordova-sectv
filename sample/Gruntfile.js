@@ -9,7 +9,7 @@ module.exports = function(grunt) {
             src: ['www/**/*.js']
         },
         clean: ['platforms/sectv-orsay/www/**/*' , 'platforms/sectv-orsay/build/*' , 'platforms/sectv-tizen/www/**/*' , 'platforms/sectv-tizen/build/*'],
-        'sectv-build': {
+        'sectv-prepare': {
             'sectv-orsay': {
                 dest: 'platforms/sectv-orsay/www',
                 platformRepos: '../cordova-sectv-orsay',
@@ -27,15 +27,15 @@ module.exports = function(grunt) {
                 }
             }
         },
-        'sectv-package': {
+        'sectv-build': {
             'sectv-orsay': {
-                build: 'platforms/sectv-orsay/www',
+                www: 'platforms/sectv-orsay/www',
                 dest: 'platforms/sectv-orsay/build'
             },
             'sectv-tizen': {
                 profilePath: '/home/TizenSDK/.metadata/.plugins/org.tizen.common.sign/profiles.xml',
                 profileName: 'myprofile',
-                build: 'platforms/sectv-tizen/www',
+                www: 'platforms/sectv-tizen/www',
                 dest: 'platforms/sectv-tizen/build'
             }
         }
@@ -49,5 +49,5 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-cordova-sectv');
 
     // defaults
-    grunt.registerTask('default', ['jshint', 'clean', 'sectv-build', 'sectv-package']);
+    grunt.registerTask('default', ['jshint', 'clean', 'sectv-prepare', 'sectv-build']);
 };

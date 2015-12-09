@@ -4,11 +4,11 @@ Grunt task for build and package the cordova project with `sectv-***` platforms.
 # About this project
 This project would help who makes Samsung Tizen TV or Legacy Samsung Smart TV web application using cordova.
 It provides several grunt task:
-* `sectv-build`: Creates application project for each platforms from your cordova project. The target must be one of `sectv-orsay` and `sectv-tizen`.
+* `sectv-prepare`: Creates application project for each platforms from your cordova project. The target must be one of `sectv-orsay` and `sectv-tizen`.
     * Options for the task:
 
         ```js
-        'sectv-build': {    // task
+        'sectv-prepare': {    // task
             'sectv-orsay': {    // target
                 dest: 'platforms/sectv-orsay/www',  // Destination path to create the application project.
                 platformRepos: '../cordova-sectv-orsay',    // Path to 'sectv-***` cordova platform's repository.
@@ -19,11 +19,11 @@ It provides several grunt task:
             }
         }
         ```
-* `sectv-package`: Packaging the application project into each platforms package file format like `.zip` or `.wgt`. The target must be one of `sectv-orsay` and `sectv-tizen`.
+* `sectv-build`: Packaging the application project into each platforms package file format like `.zip` or `.wgt`. The target must be one of `sectv-orsay` and `sectv-tizen`.
     * Options for the task:
 
         ```js
-        'sectv-package': {  // task
+        'sectv-build': {  // task
             'sectv-orsay': {    // target
                 build: 'platforms/sectv-orsay/www', // Path to Application project
                 dest: 'platforms/sectv-orsay/build' // Directory to create the package
@@ -69,13 +69,13 @@ $ npm install grunt-cordova-sectv
 * In the cordova project's root:
 
     ```sh
-    $ grunt sectv-build:<platform>
+    $ grunt sectv-prepare:<platform>
     ```
 
 * `<platform>` can be one of supported platforms. If you want to build all platforms:
 
     ```sh
-    $ grunt sectv-build
+    $ grunt sectv-prepare
     ```
 
 * For more details, please see the `sample/Gruntfile.js` of this project.
@@ -113,13 +113,13 @@ $ npm install grunt-cordova-sectv
 * In the cordova project's root:
 
     ```sh
-    $ grunt sectv-package:<platform>
+    $ grunt sectv-build:<platform>
     ```
 
 * `<platform>` can be one of supported platforms. If you want to package all platforms:
 
     ```sh
-    $ grunt sectv-package
+    $ grunt sectv-build
     ```
     
 * For more details, please see the `sample/Gruntfile.js` of this project.
