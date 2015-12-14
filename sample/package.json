@@ -11,6 +11,6 @@
     "grunt-cli": "^0.1.13",
     "grunt-contrib-jshint": "^0.11.2",
     "grunt-contrib-clean": "^0.6.0",
-    "grunt-cordova-sectv": "^0.0.1"
+    "grunt-cordova-sectv": ">=0.0.1"
   }
 }
