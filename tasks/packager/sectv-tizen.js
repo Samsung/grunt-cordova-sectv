@@ -172,6 +172,9 @@ function prepareDir(dir) {
     dir = path.resolve(dir);
     var tmp = dir.split(path.sep);
     var curPath = tmp[0];
+    if(path.isAbsolute(dir)){
+        curPath = path.join(path.sep, curPath);
+    }
     for (var i=1; i<tmp.length; i++) {
         curPath = path.join(curPath, tmp[i]);
         if (!fs.existsSync(curPath)) {
