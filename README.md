@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Samsung/grunt-cordova-sectv.svg?branch=master)](https://travis-ci.org/Samsung/grunt-cordova-sectv)
+
 # grunt-cordova-sectv
 Grunt task for prepare and build the cordova project with `sectv-***` platforms.
 
