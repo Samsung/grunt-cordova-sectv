@@ -18,6 +18,7 @@
 
 var fs = require('fs');
 var path = require('path');
+var mkdirp = require('mkdirp');
 var inquirer = require('inquirer');
 var utils = require('../lib/utils');
 var shelljs = require('shelljs');
@@ -222,15 +223,7 @@ function askUserData(cordovaConf, callback, versionOnly, userData) {
 }
 
 function prepareDir(dir) {
-    dir = path.resolve(dir);
-    var tmp = dir.split(path.sep);
-    var curPath = tmp[0];
-    for (var i=1; i<tmp.length; i++) {
-        curPath = path.join(curPath, tmp[i]);
-        if (!fs.existsSync(curPath)) {
-            fs.mkdirSync(curPath);
-        }
-    }
+    mkdirp.sync(dir);
 }
 
 module.exports = {
