@@ -67,6 +67,22 @@ function getValidOrsayConfData(configPath) {
         // name is invalid
         return null;
     }
+    if (typeof orsayData.thumbicon !== 'string' || orsayData.thumbicon.length <= 0) {
+        // thumbicon is invalid
+        return null;
+    }
+    if (typeof orsayData.bigthumbicon !== 'string' || orsayData.bigthumbicon.length <= 0) {
+        // bigthumbicon is invalid
+        return null;
+    }
+    if (typeof orsayData.listicon !== 'string' || orsayData.listicon.length <= 0) {
+        // listicon is invalid
+        return null;
+    }
+    if (typeof orsayData.biglisticon !== 'string' || orsayData.biglisticon.length <= 0) {
+        // biglisticon is invalid
+        return null;
+    }
     if (!validateOrsayVersion(orsayData.version)) {
         // version is invalid
         return null;
@@ -187,6 +203,38 @@ function askUserData(cordovaConf, callback, versionOnly, userData) {
             default: semVer2OrsayVer(cordovaConf.version),
             validate: function(input) {
                 return /^[0-9]+\.[0-9]+$/.test(input) ? true : 'invalid version string for orsay platform';
+            }
+        }, {
+            type: 'input',
+            name: 'thumbicon',
+            message: 'ThumbIcon path (default is \'img/logo.png\')',
+            default: 'img/logo.png',
+            validate: function(input) {
+                return typeof(input) === 'string' ? true : 'invalid iconpath';
+            }
+        }, {
+            type: 'input',
+            name: 'bigthumbicon',
+            message: 'BigThumbIcon path (default is \'img/logo.png\')',
+            default: 'img/logo.png',
+            validate: function(input) {
+                return typeof(input) === 'string' ? true : 'invalid iconpath';
+            }
+        }, {
+            type: 'input',
+            name: 'listicon',
+            message: 'ListIcon path (default is \'img/logo.png\')',
+            default: 'img/logo.png',
+            validate: function(input) {
+                return typeof(input) === 'string' ? true : 'invalid iconpath';
+            }
+        }, {
+            type: 'input',
+            name: 'biglisticon',
+            message: 'BigListIcon path (default is \'img/logo.png\')',
+            default: 'img/logo.png',
+            validate: function(input) {
+                return typeof(input) === 'string' ? true : 'invalid iconpath';
             }
         }, {
             type: 'input',

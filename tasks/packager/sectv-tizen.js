@@ -71,6 +71,10 @@ function getValidTizenConfData(configPath) {
         // packageid is invalid
         return null;
     }
+    if (typeof tizenData.iconpath !== 'string' || tizenData.iconpath.length <= 0) {
+        // iconpath is invalid
+        return null;
+    }
     if (!validateTizenVersion(tizenData.version)) {
         // version is invalid
         return null;
@@ -156,6 +160,14 @@ function askUserData(cordovaConf, callback, versionOnly, userData) {
             default: cordovaConf.version,
             validate: function(input) {
                 return /\d.\d.\d/.test(input) ? true : 'invalid version string for tizen platform';
+            }
+        }, {
+            type: 'input',
+            name: 'iconpath',
+            message: 'Icon path (default is \'img/logo.png\')',
+            default: 'img/logo.png',
+            validate: function(input) {
+                return typeof(input) === 'string' ? true : 'invalid iconpath';
             }
         }, {
             type: 'input',
@@ -267,6 +279,7 @@ module.exports = {
                         encoding: 'utf8'
                     });
                     var rendered = mustache.render(template, userData);
+                    
                     fs.writeFileSync(destFilePath, rendered, {
                         encoding: 'utf8'
                     });
