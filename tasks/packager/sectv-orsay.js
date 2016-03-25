@@ -25,6 +25,7 @@ var shelljs = require('shelljs');
 var mustache = require('mustache');
 var grunt = require('grunt');
 var zipdir = require('zip-dir');
+var js2xmlparser =  require('js2xmlparser');
 
 var revLen = 3;
 
@@ -274,6 +275,20 @@ function prepareDir(dir) {
     mkdirp.sync(dir);
 }
 
+function getManualTizenConfData(platformsData){
+    var i,
+        manualTizenConfData = null;
+    if (platformsData) {
+        for (i=0; i < platformsData.length; i++) {
+            if (platformsData[i].$.name === 'sectv-orsay') {
+                delete platformsData[i].$;
+                manualTizenConfData = utils.trim(js2xmlparser('platform',platformsData[i],{declaration : {include : false},attributeString : '$'}).replace(/<(\/?platform)>/igm,''));
+            }
+        }
+    }
+    return manualTizenConfData;
+}
+
 module.exports = {
     prepare: function (successCallback, errorCallback, wwwSrc, dest, platformRepos, scripts) {
         console.log('\nStart preparing codes for Legacy Samsung Smart TV Platform......');
@@ -292,6 +307,7 @@ module.exports = {
                 if(useExisting) {
                     askUserData(cordovaConf, function (data) {
                         userData.version = data.version;
+                        userData.manualConfData = getManualTizenConfData(cordovaConf.platform);
                         buildProject();
                     }, true, userData);
                 }
@@ -306,6 +322,7 @@ module.exports = {
         else {
             askUserData(cordovaConf, function (data) {
                 userData = data;
+                userData.manualConfData = getManualTizenConfData(cordovaConf.platform);
                 buildProject();
             });
         }

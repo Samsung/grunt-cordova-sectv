@@ -45,7 +45,8 @@ module.exports = {
             description: conf.widget.description,
             authorName: trim(conf.widget.author[0]._ || ''),
             authorEmail: trim(conf.widget.author[0].$.email || ''),
-            authorHref: trim(conf.widget.author[0].$.href || '')
+            authorHref: trim(conf.widget.author[0].$.href || ''),
+            platform : conf.widget.platform
         };
     }
 };

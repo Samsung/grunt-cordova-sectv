@@ -24,6 +24,7 @@ var utils = require('../lib/utils');
 var shelljs = require('shelljs');
 var mustache = require('mustache');
 var child = require('child_process');
+var js2xmlparser =  require('js2xmlparser');
 
 function saveUserConfFile(configPath, tizenConf) {
     var userConfData = {};
@@ -185,6 +186,20 @@ function prepareDir(dir) {
     mkdirp.sync(dir);
 }
 
+function getManualTizenConfData(platformsData){
+    var i,
+        manualTizenConfData = null;
+    if (platformsData) {
+        for (i=0; i < platformsData.length; i++) {
+            if (platformsData[i].$.name === 'sectv-tizen') {
+                delete platformsData[i].$;
+                manualTizenConfData = utils.trim(js2xmlparser('platform',platformsData[i],{declaration : {include : false},attributeString : '$'}).replace(/<(\/?platform)>/igm,''));
+            }
+        }
+    }
+    return manualTizenConfData;
+}
+
 module.exports = {
     prepare: function(successCallback, errorCallback, wwwSrc, dest, platformRepos, scripts) {
         console.log('\nStart preparing codes for Samsung Tizen Platform......');
@@ -203,6 +218,7 @@ module.exports = {
                 if(useExisting) {
                     askUserData(cordovaConf, function (data) {
                         userData.version = data.version;
+                        userData.manualConfData = getManualTizenConfData(cordovaConf.platform);
                         buildProject();
                     }, true, userData);
                 }
@@ -217,6 +233,7 @@ module.exports = {
         else {
             askUserData(cordovaConf, function (data) {
                 userData = data;
+                userData.manualConfData = getManualTizenConfData(cordovaConf.platform);
                 buildProject();
             });
         }
