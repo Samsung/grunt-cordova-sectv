@@ -42,13 +42,12 @@ function saveUserConfFile(configPath, orsayConf) {
 
 function getNextVersion(curver){
     var tmp = curver.split('.');
+    var nextVersion = '';
     if(tmp.length == 2){
         // orsay version
         var major = tmp[0];
         var minor = tmp[1];
         var minorLen = minor.length;
-        var fivot = 5;
-        var nextVersion = '';
         
         var minorInt = parseInt(minor) + 1;
         var minorStr = minorInt.toString();
@@ -59,48 +58,36 @@ function getNextVersion(curver){
             var majorStr = majorInt.toString();
             return majorStr + '.' + '00000';
         }
-
-        if(minorLen >= 5){
-            var makeZero = minorLen - minorStrLen;
-            var zeroStr = '';
-            while(makeZero--){
-                zeroStr += "0";
-            }
-            nextVersion = zeroStr + minorStr;
-        }else{
-            var beforeZero = minorLen - minorStrLen;
-            var zeroStr = '';
-            while(beforeZero--){
-                zeroStr += "0";
-            }
-            nextVersion = zeroStr + minorStr;
+        var makeZero = minorLen - minorStrLen;
+        var zeroStr = '';
+        while(makeZero--){
+            zeroStr += '0';
         }
+        nextVersion = zeroStr + minorStr;
         return major + '.' + nextVersion;
     }else if(tmp.length == 3){
         //semantic version
-        var major = tmp[0];
-        var minor = tmp[1];
+        var majorsem = tmp[0];
+        var minorsem = tmp[1];
         var revision = tmp[2];
-
-        var nextVersion = '';
         
         var revisionInt = parseInt(revision) + 1;
         var revisionStr = revisionInt.toString();
         var revisionStrLen = revisionStr.length;
 
         if(revision.length < revisionStrLen){
-            var minorInt = parseInt(minor) + 1;
-            var minorStr = minorInt.toString();
-            return major + '.' + minorStr + '.' + '0';
+            var minorsemInt = parseInt(minorsem) + 1;
+            var minorsemStr = minorsemInt.toString();
+            return majorsem + '.' + minorsemStr + '.' + '0';
         }
 
         var beforeZero = revision.length - revisionStrLen;
-        var zeroStr = '';
+        var zerosemStr = '';
         while(beforeZero--){
-            zeroStr += "0";
+            zerosemStr += '0';
         }
-        nextVersion = zeroStr + revisionStr;
-        return semVer2OrsayVer(major + '.' + minor + '.' + nextVersion);
+        nextVersion = zerosemStr + revisionStr;
+        return semVer2OrsayVer(majorsem + '.' + minorsem + '.' + nextVersion);
     }
 }
 
