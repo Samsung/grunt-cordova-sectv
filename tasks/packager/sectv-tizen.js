@@ -268,6 +268,10 @@ module.exports = {
                     var to = path.join(dest, key);
                     var from = path.resolve(scripts[key]);
                     shelljs.cp('-f', from, to);
+
+                    if (!fs.existsSync(from)) {
+                        throw Error('cordova.js, toast.js file are not exist.');
+                    }
                 }
             }
 
