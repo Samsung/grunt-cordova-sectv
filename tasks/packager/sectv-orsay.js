@@ -316,18 +316,18 @@ function prepareDir(dir) {
     mkdirp.sync(dir);
 }
 
-function getManualTizenConfData(platformsData){
+function getManualOrsayConfData(platformsData){
     var i,
-        manualTizenConfData = null;
+        manualOrsayConfData = null;
     if (platformsData) {
         for (i=0; i < platformsData.length; i++) {
             if (platformsData[i].$.name === 'sectv-orsay') {
                 delete platformsData[i].$;
-                manualTizenConfData = utils.trim(js2xmlparser('platform',platformsData[i],{declaration : {include : false},attributeString : '$'}).replace(/<(\/?platform)>/igm,''));
+                manualOrsayConfData = utils.trim(js2xmlparser('platform',platformsData[i],{declaration : {include : false},attributeString : '$'}).replace(/<(\/?platform)>/igm,''));
             }
         }
     }
-    return manualTizenConfData;
+    return manualOrsayConfData;
 }
 
 module.exports = {
@@ -348,7 +348,7 @@ module.exports = {
                 if(useExisting) {
                     askUserData(cordovaConf, function (data) {
                         userData.version = data.version;
-                        userData.manualConfData = getManualTizenConfData(cordovaConf.platform);
+                        userData.manualConfData = getManualOrsayConfData(cordovaConf.platform);
                         buildProject();
                     }, true, userData);
                 }
@@ -363,7 +363,7 @@ module.exports = {
         else {
             askUserData(cordovaConf, function (data) {
                 userData = data;
-                userData.manualConfData = getManualTizenConfData(cordovaConf.platform);
+                userData.manualConfData = getManualOrsayConfData(cordovaConf.platform);
                 buildProject();
             });
         }
