@@ -348,7 +348,6 @@ module.exports = {
                 if(useExisting) {
                     askUserData(cordovaConf, function (data) {
                         userData.version = data.version;
-                        userData.manualConfData = getManualOrsayConfData(cordovaConf.platform);
                         buildProject();
                     }, true, userData);
                 }
@@ -363,7 +362,6 @@ module.exports = {
         else {
             askUserData(cordovaConf, function (data) {
                 userData = data;
-                userData.manualConfData = getManualOrsayConfData(cordovaConf.platform);
                 buildProject();
             });
         }
@@ -385,6 +383,8 @@ module.exports = {
                 console.log('It is not supported in this platform. It would be caused abnormal operation.');
                 console.log('Please confirm your file : ' + targetFile);
             }
+
+            userData.manualConfData = getManualOrsayConfData(cordovaConf.platform);
 
             saveUserConfFile(userConfPath, userData);
             successCallback && successCallback();

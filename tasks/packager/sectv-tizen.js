@@ -218,7 +218,6 @@ module.exports = {
                 if(useExisting) {
                     askUserData(cordovaConf, function (data) {
                         userData.version = data.version;
-                        userData.manualConfData = getManualTizenConfData(cordovaConf.platform);
                         buildProject();
                     }, true, userData);
                 }
@@ -233,7 +232,6 @@ module.exports = {
         else {
             askUserData(cordovaConf, function (data) {
                 userData = data;
-                userData.manualConfData = getManualTizenConfData(cordovaConf.platform);
                 buildProject();
             });
         }
@@ -255,6 +253,8 @@ module.exports = {
                 console.log('It would be caused abnormal operation. It is recommended to add csp setting in config.xml.');
                 console.log('Please confirm your file : ' + targetFile);
             }
+
+            userData.manualConfData = getManualTizenConfData(cordovaConf.platform);
 
             saveUserConfFile(userConfPath, userData);
             successCallback && successCallback();
