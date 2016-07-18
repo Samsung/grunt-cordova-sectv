@@ -24,7 +24,6 @@ var utils = require('../lib/utils');
 var shelljs = require('shelljs');
 var mustache = require('mustache');
 var child = require('child_process');
-var js2xmlparser =  require('js2xmlparser');
 
 function saveUserConfFile(configPath, webosConf) {
     var userConfData = {};
@@ -299,37 +298,27 @@ module.exports = {
         console.log('\nStart packaging LG Webos TV Platform......');
         var www = data.www || path.join('platforms', 'tv-webos', 'www');
         var dest = data.dest || path.join('platforms', 'tv-tizen', 'build');
-        var TEMPORARY_BUILD_DIR = '.buildResult';
 
         www = path.resolve(www);
         dest = path.resolve(dest);
-        child.exec('webos version', function(err, stdout, stderr) {
+        child.exec('ares --version', function(err, stdout, stderr) {
             if(err) {
                 console.log(stderr);
-                throw Error('The command \"webos\" failed. Make sure you have the latest Webos SDK installed, and the \"webos\" command (inside the tools/ide/bin folder) is added to your path.');
+                throw Error('The command \"ares\" failed. Make sure you have the latest Webos SDK installed, and the \"ares\" command (inside the CLI folder) is added to your path.');
             }
             console.log(stdout);
 
-            // reference url : https://developer.tizen.org/development/tools/web-tools/command-line-interface#mw_package
-            var result = shelljs.exec('tizen cli-config "default.profiles.path=' + path.resolve(data.profilePath) + '"');
-            if(result.code) {
-                throw Error(result.output);
-            }
-            result = shelljs.exec('tizen build-web -out ' + TEMPORARY_BUILD_DIR + ' -- "' + path.resolve(www) + '"');
-            if(result.code) {
-                throw Error(result.output);
-            }
-            result = shelljs.exec('tizen package --type wgt --sign ' + data.profileName + ' -- ' + path.resolve(path.join(www, TEMPORARY_BUILD_DIR)));
+            // reference url : http://developer.lge.com/webOSTV/sdk/web-sdk/webos-tv-cli/using-webos-tv-cli/
+            var result = shelljs.exec('ares-package ' + path.resolve(www));
             if(result.code) {
                 throw Error(result.output);
             }
             else {
-                var packagePath = result.output.match(/Package File Location\:\s*(.*)/);
+                var packagePath = result.output.match(/Creating package (.*) in/);
                 if(packagePath && packagePath[1]) {
                     prepareDir(dest);
                     shelljs.mv('-f', packagePath[1], path.resolve(dest));
-                    shelljs.rm('-rf', path.resolve(path.join(www, TEMPORARY_BUILD_DIR)));
-                    console.log('Package created at ' + path.join(dest, path.basename(packagePath)));
+                    console.log('Package created at ' + path.join(dest, packagePath[1]));
                 }
                 else {
                     throw Error('Fail to retrieve Package File Location.');
