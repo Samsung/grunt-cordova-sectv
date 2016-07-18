@@ -6,7 +6,7 @@ Grunt task for prepare and build the cordova project with `sectv-***` platforms.
 # About this project
 This project would help who makes Samsung Tizen TV or Legacy Samsung Smart TV web application using cordova.
 It provides several grunt task:
-* `sectv-prepare`: Creates application project for each platforms from your cordova project. The target must be one of `sectv-orsay` and `sectv-tizen`.
+* `sectv-prepare`: Creates application project for each platforms from your cordova project. The target must be one of `sectv-orsay` and `sectv-tizen` and `tv-webos`.
     * Options for the task:
 
         ```js
@@ -21,7 +21,7 @@ It provides several grunt task:
             }
         }
         ```
-* `sectv-build`: Packaging the application project into each platforms package file format like `.zip` or `.wgt`. The target must be one of `sectv-orsay` and `sectv-tizen`.
+* `sectv-build`: Packaging the application project into each platforms package file format like `.zip` or `.wgt`. The target must be one of `sectv-orsay` and `sectv-tizen` and `tv-webos`.
     * Options for the task:
 
         ```js
@@ -67,6 +67,7 @@ $ npm install grunt-cordova-sectv
 # Supported platform
 * sectv-orsay
 * sectv-tizen
+* tv-webos
 
 # How to prepare the application by platforms
 * In the cordova project's root:
@@ -113,6 +114,13 @@ $ npm install grunt-cordova-sectv
             - `profileName`: Activated Profile name
     - If you couldn't find `profiles.xml`, please refer [How to share Author Certificate](http://www.samsungdforum.com/TizenGuide/?FolderName=tizen3531&FileName=index.html)
  
+* Packaging for `tv-webos`
+    - Set the path of environment variables
+
+        ```./
+        C:\webOS_TV_SDK\CLI
+        ```
+
 * In the cordova project's root:
 
     ```sh
