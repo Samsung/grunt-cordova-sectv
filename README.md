@@ -21,7 +21,7 @@ It provides several grunt task:
             }
         }
         ```
-* `sectv-build`: Packaging the application project into each platforms package file format like `.zip` or `.wgt`. The target must be one of `sectv-orsay` and `sectv-tizen` and `tv-webos`.
+* `sectv-build`: Packaging the application project into each platforms package file format like `.zip` or `.wgt` or `.ipk`. The target must be one of `sectv-orsay` and `sectv-tizen` and `tv-webos`.
     * Options for the task:
 
         ```js
