@@ -319,7 +319,7 @@ module.exports = {
                     });
                     shelljs.rm(path.join(dest, fileName));
                 }
-            }           
+            }
             return true;
         }
     },
