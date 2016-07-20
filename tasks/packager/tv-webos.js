@@ -190,6 +190,21 @@ function prepareDir(dir) {
     mkdirp.sync(dir);
 }
 
+function getManualWebosConfData(platformsData){
+    var i,
+        manualWebosConfData = null;
+
+    if (platformsData) {
+        for (i=0; i < platformsData.length; i++) {
+            if (platformsData[i].$.name === 'tv-webos') {
+                delete platformsData[i].$;
+                manualWebosConfData = utils.trim(platformsData[i]._);
+            }
+        }
+    }
+    return manualWebosConfData;
+}
+
 module.exports = {
     prepare: function(successCallback, errorCallback, wwwSrc, dest, platformRepos, scripts) {
         console.log('\nStart preparing codes for LG Webos Platform......');
@@ -214,6 +229,7 @@ module.exports = {
                 else {
                     askUserData(cordovaConf, function (data) {
                         userData = data;
+                        userData.manualConfData = getManualWebosConfData(cordovaConf.platform);
                         buildProject();
                     });
                 }
@@ -222,6 +238,7 @@ module.exports = {
         else {
             askUserData(cordovaConf, function (data) {
                 userData = data;
+                userData.manualConfData = getManualWebosConfData(cordovaConf.platform);
                 buildProject();
             });
         }
@@ -287,12 +304,22 @@ module.exports = {
                     });
                     var rendered = mustache.render(template, userData);
                     
+                    if(fileName.match(/\.json.tmpl$/)) {
+                        var renderedJSON = JSON.parse(rendered);
+                        var manualConfDataJSON = JSON.parse(userData.manualConfData);
+
+                        for(var key in manualConfDataJSON) {
+                            renderedJSON[key] =  manualConfDataJSON[key]
+                        }
+                        rendered = JSON.stringify(renderedJSON, '', '\t');
+                    }
+                    
                     fs.writeFileSync(destFilePath, rendered, {
                         encoding: 'utf8'
                     });
                     shelljs.rm(path.join(dest, fileName));
                 }
-            }
+            }           
             return true;
         }
     },
