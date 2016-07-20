@@ -238,10 +238,12 @@ module.exports = {
                 encoding: 'utf8'
             });
 
+            console.log('\nPlease note below.');
+            console.log('1. On WebOS, recommended maximum icon size is 80x80.');
             if(target.match(/(<meta.*)(http-equiv)(.*=*.)("Content-Security-Policy"|'Content-Security-Policy')/)) {
-                console.log('\nWARNING!!!!! REMOVE meta tag for csp setting in the "index.html"');
-                console.log('It is not supported in this platform. It would be caused abnormal operation.');
-                console.log('Please confirm your file : ' + targetFile);
+                console.log('2. Remove the meta tag for csp setting in [index.html]');
+                console.log('   It is not supported on this platform. It would be caused abnormal operation.');
+                console.log('   Please check your file : ' + targetFile);
             }
 
             saveUserConfFile(userConfPath, userData);
