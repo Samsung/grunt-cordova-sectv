@@ -45,10 +45,6 @@ function getNextSemVersion(curver) {    // just increase revision
     return major + '.' + minor + '.' + revision;
 }
 
-function generateWebosPackageID() {
-    return Math.random().toString(36).substr(2, 10);
-}
-
 function getValidWebosConfData(configPath) {
     console.log(configPath);
     if (!(fs.existsSync(configPath))) {
@@ -308,8 +304,11 @@ module.exports = {
                         var renderedJSON = JSON.parse(rendered);
                         var manualConfDataJSON = JSON.parse(userData.manualConfData);
 
-                        for(var key in manualConfDataJSON) {
-                            renderedJSON[key] =  manualConfDataJSON[key]
+                        var key;
+                        for(key in manualConfDataJSON) {
+                            if(manualConfDataJSON.hasOwnProperty(key)) {
+                                renderedJSON[key] =  manualConfDataJSON[key];
+                            }
                         }
                         rendered = JSON.stringify(renderedJSON, '', '\t');
                     }
