@@ -84,10 +84,10 @@ $ npm install grunt-cordova-sectv
 
 * For more details, please see the `sample/Gruntfile.js` of this project.
 
-# How to add other elements to a particular platform when preparing
+# How to add other elements to a particular platform
 * It is sometimes necessary to add something to each platform which maybe not mandatory but needed.
 * In config.xml of your Cordova project, please add elements in each platform tag.
-And these elements will be automatically added to each platform.
+And these elements will be automatically added to each platform when preparing.
     - In case orasy and tizen, elements format is XML tag.
     - In case webos, elements format is JSON.
 
