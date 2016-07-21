@@ -93,7 +93,7 @@ And these elements will be automatically added to each platform when preparing.
 
     ```xml
     <platform name="sectv-orsay">
-        <multiapp>n</multiapp>
+        <multiapp>y</multiapp>
     </platform>
     <platform name="sectv-tizen">
         <tizen:metadata key="http://samsung.com/tv/metadata/prelaunch.support" value="true" />
