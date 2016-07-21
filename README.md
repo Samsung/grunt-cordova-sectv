@@ -84,6 +84,26 @@ $ npm install grunt-cordova-sectv
 
 * For more details, please see the `sample/Gruntfile.js` of this project.
 
+# How to add other elements to a particular platform when preparing
+* It is sometimes necessary to add something to each platform which maybe not mandatory but needed.
+* In config.xml of your Cordova project, please add elements in each platform tag.
+And these elements will be automatically added to each platform.
+    - In case orasy and tizen, elements format is XML tag.
+    - In case webos, elements format is JSON.
+
+    ```xml
+    <platform name="sectv-orsay">
+        <multiapp>n</multiapp>
+    </platform>
+    <platform name="sectv-tizen">
+        <tizen:metadata key="http://samsung.com/tv/metadata/prelaunch.support" value="true" />
+    </platform>
+    <platform name="tv-webos">
+        {"disableBackHistoryAPI": true}
+    </platform>
+    ```
+* For more details, please see the [config.xml reference on Cordova site](https://cordova.apache.org/docs/en/latest/config_ref/index.html).
+
 # How to build and package the application by platforms
 * Packaging for `sectv-tizen`
     - Set the path of environment variables
