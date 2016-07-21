@@ -99,7 +99,7 @@ And these elements will be automatically added to each platform when preparing.
         <tizen:metadata key="http://samsung.com/tv/metadata/prelaunch.support" value="true" />
     </platform>
     <platform name="tv-webos">
-        {"disableBackHistoryAPI": true}
+        {"appDescription": "This is an sample application"}
     </platform>
     ```
 * For more details, please see the [config.xml reference on Cordova site](https://cordova.apache.org/docs/en/latest/config_ref/index.html).
