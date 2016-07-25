@@ -213,6 +213,7 @@ module.exports = {
 
         // config
         var cordovaConf = utils.getCordovaConfig();
+
         var userData = getValidWebosConfData(userConfPath);
         if(userData) {
             confirmUseExistingData(userData, function (useExisting) {
