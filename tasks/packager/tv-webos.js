@@ -227,7 +227,6 @@ module.exports = {
                 else {
                     askUserData(cordovaConf, function (data) {
                         userData = data;
-                        
                         userData.manualConfData = getManualWebosConfData(cordovaConf.platform);
                         buildProject();
                     });
