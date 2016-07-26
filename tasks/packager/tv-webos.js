@@ -220,12 +220,14 @@ module.exports = {
                 if(useExisting) {
                     askUserData(cordovaConf, function (data) {
                         userData.version = data.version;
+                        userData.manualConfData = getManualWebosConfData(cordovaConf.platform);
                         buildProject();
                     }, true, userData);
                 }
                 else {
                     askUserData(cordovaConf, function (data) {
                         userData = data;
+                        
                         userData.manualConfData = getManualWebosConfData(cordovaConf.platform);
                         buildProject();
                     });
