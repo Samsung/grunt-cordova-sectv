@@ -175,6 +175,15 @@ function askUserData(cordovaConf, callback, versionOnly, userData) {
             validate: function(input) {
                 return typeof(input) === 'string' ? true : 'invalid iconpath';
             }
+        }, {
+            type: 'list',
+            name: 'resolution',
+            message: 'Which resolution does your application developed for?',
+            default: '1920x1080',
+            choices: [
+                '1280x720',
+                '1920x1080'
+            ]
         }];
         inquirer.prompt(ask, function(answers) {
             callback(answers);
