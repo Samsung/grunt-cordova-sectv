@@ -141,7 +141,7 @@ function askUserData(cordovaConf, callback, versionOnly, userData) {
             message: 'What\'s the application\'s name?',
             default: cordovaConf.name,
             validate: function(input) {
-                return /^[a-zA-Z][^~!\.\;\\\/\|\"\'@\#$%<>^&*\()\-=+_\’\n\t\s]*$/.test(input) ? true : 'invalid name for tizen platform';
+                return /^[a-zA-Z][^~!\.\;\\\/\|\"\'@\#$%<>^&*\()\-=+_\’\n\t\s]*$/.test(input) ? true : 'invalid name for webos platform';
             }
         },  {
             type: 'input',
@@ -203,7 +203,7 @@ function getManualWebosConfData(platformsData){
 
 module.exports = {
     prepare: function(successCallback, errorCallback, wwwSrc, dest, platformRepos, scripts) {
-        console.log('\nStart preparing codes for LG Webos Platform......');
+        console.log('\nStart preparing codes for Webos TV Platform......');
 
         // file path
         wwwSrc = path.resolve(wwwSrc);
@@ -325,9 +325,9 @@ module.exports = {
         }
     },
     build: function(successCallback, errorCallback, data) {
-        console.log('\nStart packaging LG Webos TV Platform......');
+        console.log('\nStart packaging Webos TV Platform......');
         var www = data.www || path.join('platforms', 'tv-webos', 'www');
-        var dest = data.dest || path.join('platforms', 'tv-tizen', 'build');
+        var dest = data.dest || path.join('platforms', 'tv-webos', 'build');
 
         www = path.resolve(www);
         dest = path.resolve(dest);
