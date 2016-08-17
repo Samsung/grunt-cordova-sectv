@@ -101,9 +101,11 @@ function validateWebosVersion(version) {
 function confirmUseExistingData(userData, callback) {
     console.log('');
     console.log('      > [ Stored Information ]');
+    console.log('      > id          : ' + userData.id);
     console.log('      > name        : ' + userData.name);
     console.log('      > version     : ' + userData.version);
     console.log('      > vendor      : ' + userData.vendor);
+    console.log('      > resolution  : ' + userData.resolution);
 
     var ask = [{
         type: 'confirm',
@@ -137,16 +139,24 @@ function askUserData(cordovaConf, callback, versionOnly, userData) {
     else {
         ask = [{
             type: 'input',
+            name: 'id',
+            message: 'What\'s the application\'s id? (Valid format: DNS naming)',
+            default: 'com.yourdomain.app',
+            validate: function(input) {
+                return /^([a-z0-9]+\.)+[a-z0-9]+$/.test(input) ? true : 'invalid id for webos platform';
+            }
+        },{
+            type: 'input',
             name: 'name',
             message: 'What\'s the application\'s name?',
             default: cordovaConf.name,
             validate: function(input) {
-                return /^[a-zA-Z][^~!\.\;\\\/\|\"\'@\#$%<>^&*\()\-=+_\’\n\t\s]*$/.test(input) ? true : 'invalid name for webos platform';
+                return /^[a-zA-Z0-9]+$/.test(input) ? true : 'invalid name for webos platform';
             }
         },  {
             type: 'input',
             name: 'version',
-            message: 'Application Version (Valid RegExp: /\d./\d./\d)',
+            message: 'Application Version (Valid RegExp: /\d./\d./\d/)',
             default: cordovaConf.version,
             validate: function(input) {
                 return /\d.\d.\d/.test(input) ? true : 'invalid version string for webos platform';
