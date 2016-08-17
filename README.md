@@ -86,6 +86,10 @@ $ npm install grunt-cordova-sectv
 
 # How to add other elements to a particular platform
 * It is sometimes necessary to add something to each platform which maybe not mandatory but needed.
+* Mandatory elements
+    - [sectv-orsay](https://github.com/Samsung/cordova-sectv-orsay/blob/master/www/config.xml.tmpl)
+    - [sectv-tizen](https://github.com/Samsung/cordova-sectv-tizen/blob/master/www/config.xml.tmpl)
+    - [tv-webos](https://github.com/Samsung/cordova-tv-webos/blob/master/www/appinfo.json.tmpl)
 * In `config.xml` of your Cordova project, please add elements in each platform tag.
 And these elements will be automatically added to each platform when preparing.
     - In case orasy and tizen, elements format is XML tag.
