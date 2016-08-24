@@ -25,6 +25,14 @@ module.exports = function(grunt) {
                     'cordova.js': '../cordova-js/pkg/cordova.sectv-tizen.js',
                     'toast.js': '../cordova-plugin-toast/platform_www/sectv-tizen/toast.js'
                 }
+            },
+            'tv-webos': {
+                dest: 'platforms/tv-webos/www',
+                platformRepos: '../cordova-tv-webos',
+                scripts: {
+                    'cordova.js': '../cordova-js/pkg/cordova.tv-webos.js',
+                    'toast.js': '../cordova-plugin-toast/platform_www/tv-webos/toast.js'
+                }
             }
         },
         'sectv-build': {
@@ -37,6 +45,10 @@ module.exports = function(grunt) {
                 profileName: 'myprofile',
                 www: 'platforms/sectv-tizen/www',
                 dest: 'platforms/sectv-tizen/build'
+            },
+            'tv-webos': {
+                www: 'platforms/tv-webos/www',
+                dest: 'platforms/tv-webos/build'
             }
         }
     });
