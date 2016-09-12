@@ -118,9 +118,9 @@ And these elements will be automatically added to each platform when preparing.
     - In the cordova project's root/Gruntfile.js:
 
         ```js
-        // Fill out your 'filePath' and 'profileName'
+        // Fill out your 'profilePath' and 'profileName'
         'sectv-tizen': {
-            filePath: '/home/TizenSDK/.metadata/.plugins/org.tizen.common.sign/profiles.xml',
+            profilePath: '/home/TizenSDK/.metadata/.plugins/org.tizen.common.sign/profiles.xml',
             profileName: 'myprofile',
             www: 'platforms/sectv-tizen/www',
             dest: 'platforms/sectv-tizen/build'
