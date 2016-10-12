@@ -348,6 +348,7 @@ module.exports = {
                 if(useExisting) {
                     askUserData(cordovaConf, function (data) {
                         userData.version = data.version;
+                        userData.manualConfData = getManualOrsayConfData(cordovaConf.platform);
                         buildProject();
                     }, true, userData);
                 }

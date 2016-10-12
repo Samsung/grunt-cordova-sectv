@@ -218,6 +218,7 @@ module.exports = {
                 if(useExisting) {
                     askUserData(cordovaConf, function (data) {
                         userData.version = data.version;
+                        userData.manualConfData = getManualTizenConfData(cordovaConf.platform);
                         buildProject();
                     }, true, userData);
                 }
