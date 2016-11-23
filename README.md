@@ -126,7 +126,7 @@ And these elements will be automatically added to each platform when preparing.
             dest: 'platforms/sectv-tizen/build'
         }
         ```
-    - filePath
+    - profilePath
         - In the SDK workspace:
 
         ```./
