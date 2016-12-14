@@ -111,10 +111,18 @@ And these elements will be automatically added to each platform when preparing.
 # How to build and package the application by platforms
 * Packaging for `sectv-tizen`
     - Set the path of environment variables
+        - Case 1. Tizen TV SDK 2.4 (previous version)
 
-        ```./
-        C:\tizen-sdk\tools\ide\bin
-        ```
+            ```./
+            C:\tizen-sdk\tools\ide\bin
+            ```
+
+        - Case 2. Tizen Studio (Recommend)
+
+            ```./
+            C:\tizen-studio\tools\ide\bin
+            ```
+
     - In the cordova project's root/Gruntfile.js:
 
         ```js
