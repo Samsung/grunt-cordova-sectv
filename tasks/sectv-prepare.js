@@ -26,6 +26,6 @@ module.exports = function(grunt) {
             done();
         }, function () {
             done();
-        }, this.data);
+        }, this.target, this.data);
     });
 };

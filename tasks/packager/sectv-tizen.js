@@ -201,7 +201,7 @@ function getManualTizenConfData(platformsData){
 }
 
 module.exports = {
-    prepare: function(successCallback, errorCallback, data) {
+    prepare: function(successCallback, errorCallback, platformName, data) {
         console.log('\nStart preparing codes for Samsung Tizen Platform......');
 
         var wwwSrc = path.normalize('./www');

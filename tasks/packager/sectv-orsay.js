@@ -331,7 +331,7 @@ function getManualOrsayConfData(platformsData){
 }
 
 module.exports = {
-    prepare: function (successCallback, errorCallback, data) {
+    prepare: function (successCallback, errorCallback, platformName, data) {
         console.log('\nStart preparing codes for Legacy Samsung Smart TV Platform......');
 
         var wwwSrc = path.normalize('./www');
