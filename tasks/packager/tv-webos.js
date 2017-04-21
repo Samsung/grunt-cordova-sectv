@@ -1,12 +1,12 @@
 /*
  * Copyright 2015 Samsung Electronics Co., Ltd.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -221,10 +221,16 @@ function getManualWebosConfData(platformsData){
 }
 
 module.exports = {
-    prepare: function(successCallback, errorCallback, wwwSrc, dest, platformRepos, scripts) {
+    prepare: function(successCallback, errorCallback, data) {
         console.log('\nStart preparing codes for Webos TV Platform......');
 
-        // file path
+        var wwwSrc = path.normalize('./www');
+
+        // destination folder to paste necessary files for toast project
+        var dest = data.dest || path.join('platforms', platformName, 'www');
+        var platformRepos = data.platformRepos || ('../cordova-' + platformName);
+        var scripts = data.scripts;
+
         wwwSrc = path.resolve(wwwSrc);
         dest = path.resolve(dest);
         platformRepos = path.resolve(platformRepos);
@@ -320,7 +326,7 @@ module.exports = {
                         encoding: 'utf8'
                     });
                     var rendered = mustache.render(template, userData);
-                    
+
                     if(fileName.match(/\.json.tmpl$/)) {
                         var renderedJSON = JSON.parse(rendered);
                         var manualConfDataJSON = JSON.parse(userData.manualConfData);
@@ -333,7 +339,7 @@ module.exports = {
                         }
                         rendered = JSON.stringify(renderedJSON, '', '\t');
                     }
-                    
+
                     fs.writeFileSync(destFilePath, rendered, {
                         encoding: 'utf8'
                     });

@@ -1,12 +1,12 @@
 /*
  * Copyright 2015 Samsung Electronics Co., Ltd.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,7 +48,7 @@ function getNextVersion(curver){
         var major = tmp[0];
         var minor = tmp[1];
         var minorLen = minor.length;
-        
+
         var minorInt = parseInt(minor) + 1;
         var minorStr = minorInt.toString();
         var minorStrLen = minorStr.length;
@@ -70,7 +70,7 @@ function getNextVersion(curver){
         var majorsem = tmp[0];
         var minorsem = tmp[1];
         var revision = tmp[2];
-        
+
         var revisionInt = parseInt(revision) + 1;
         var revisionStr = revisionInt.toString();
         var revisionStrLen = revisionStr.length;
@@ -154,23 +154,23 @@ function semVer2OrsayVer(semver) {
     var LEN_REV = 3;
 
     var tmp = semver.split('.');
-    
+
     if(tmp.length < 3){
         return semver;
     }
-                
+
     var major = tmp[0];
     var minor = tmp[1];
     var rev = tmp[2];
-                
+
     minor = '000000' + tmp[1];
     rev = '000000' + tmp[2];
-    
+
     minor = tmp[1].length > LEN_MINOR ? tmp[1] : minor.substr(Math.max(minor.length-LEN_MINOR,LEN_MINOR));
     rev = tmp[2].length > LEN_REV ? tmp[2] : rev.substr(Math.max(rev.length-LEN_REV,LEN_REV));
 
     revLen = rev.length;
-    
+
     return major + '.' + minor + rev;
 }
 
@@ -331,10 +331,16 @@ function getManualOrsayConfData(platformsData){
 }
 
 module.exports = {
-    prepare: function (successCallback, errorCallback, wwwSrc, dest, platformRepos, scripts) {
+    prepare: function (successCallback, errorCallback, data) {
         console.log('\nStart preparing codes for Legacy Samsung Smart TV Platform......');
 
-        // file path
+        var wwwSrc = path.normalize('./www');
+
+        // destination folder to paste necessary files for toast project
+        var dest = data.dest || path.join('platforms', platformName, 'www');
+        var platformRepos = data.platformRepos || ('../cordova-' + platformName);
+        var scripts = data.scripts;
+
         wwwSrc = path.resolve(wwwSrc);
         dest = path.resolve(dest);
         platformRepos = path.resolve(platformRepos);

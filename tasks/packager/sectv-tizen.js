@@ -201,10 +201,16 @@ function getManualTizenConfData(platformsData){
 }
 
 module.exports = {
-    prepare: function(successCallback, errorCallback, wwwSrc, dest, platformRepos, scripts) {
+    prepare: function(successCallback, errorCallback, data) {
         console.log('\nStart preparing codes for Samsung Tizen Platform......');
 
-        // file path
+        var wwwSrc = path.normalize('./www');
+
+        // destination folder to paste necessary files for toast project
+        var dest = data.dest || path.join('platforms', platformName, 'www');
+        var platformRepos = data.platformRepos || ('../cordova-' + platformName);
+        var scripts = data.scripts;
+
         wwwSrc = path.resolve(wwwSrc);
         dest = path.resolve(dest);
         platformRepos = path.resolve(platformRepos);
