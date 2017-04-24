@@ -224,25 +224,32 @@ module.exports = {
     prepare: function(successCallback, errorCallback, platformName, data) {
         console.log('\nStart preparing codes for Webos TV Platform......');
 
-        var wwwSrc = path.normalize('./www');
-
         // destination folder to paste necessary files for toast project
         var dest = data.dest || path.join('platforms', platformName, 'www');
+        dest = path.resolve(dest);
+
+        // target repository
         var platformRepos = data.platformRepos || ('../cordova-' + platformName);
+        platformRepos = path.resolve(platformRepos);
+
+        // original source
+        var wwwSrc = path.resolve('www');
+
+        // necessary files for toast project
         var scripts = data.scripts;
 
-        wwwSrc = path.resolve(wwwSrc);
-        dest = path.resolve(dest);
-        platformRepos = path.resolve(platformRepos);
-        var userConfPath = path.join('platforms', 'userconf.json');
-
-        // config
+        // get data from cordova config.xml
         var cordovaConf = utils.getCordovaConfig();
 
+        // get data from userconf.json        
+        var userConfPath = path.join('platforms', 'userconf.json');
         var userData = getValidWebosConfData(userConfPath);
+
         if(userData) {
+            // exist userconf for webos
             confirmUseExistingData(userData, function (useExisting) {
                 if(useExisting) {
+                    // if user select useExisting: Y
                     askUserData(cordovaConf, function (data) {
                         userData.version = data.version;
                         userData.manualConfData = getManualWebosConfData(cordovaConf.platform);
@@ -250,6 +257,7 @@ module.exports = {
                     }, true, userData);
                 }
                 else {
+                    // if user select useExisting: N
                     askUserData(cordovaConf, function (data) {
                         userData = data;
                         userData.manualConfData = getManualWebosConfData(cordovaConf.platform);
@@ -259,6 +267,7 @@ module.exports = {
             });
         }
         else {
+            // not exist userconf for webos
             askUserData(cordovaConf, function (data) {
                 userData = data;
                 userData.manualConfData = getManualWebosConfData(cordovaConf.platform);

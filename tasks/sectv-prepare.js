@@ -22,6 +22,8 @@ module.exports = function(grunt) {
 
         var packager = require('./packager/'+platformName);
         var done = this.async();
+        
+        // prepare: function(successCallback, errorCallback, platformName, data)
         packager.prepare(function () {
             done();
         }, function () {

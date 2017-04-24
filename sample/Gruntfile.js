@@ -8,7 +8,7 @@ module.exports = function(grunt) {
             },
             src: ['www/**/*.js']
         },
-        clean: ['platforms/sectv-orsay/www/**/*' , 'platforms/sectv-orsay/build/*' , 'platforms/sectv-tizen/www/**/*' , 'platforms/sectv-tizen/build/*'],
+        clean: ['platforms/sectv-orsay/www/**/*' , 'platforms/sectv-orsay/build/*' , 'platforms/sectv-tizen/www/**/*' , 'platforms/sectv-tizen/build/*', 'platforms/tv-webos/www/**/*' , 'platforms/tv-webos/build/*'],
         'sectv-prepare': {
             'sectv-orsay': {
                 dest: 'platforms/sectv-orsay/www',

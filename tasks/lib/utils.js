@@ -18,6 +18,7 @@
 
 var fs = require('fs');
 var xml2js = require('xml2js');
+
 function trim (str) {
     return (str + '').replace(/^\s+|\s+$/g, '');
 }
@@ -36,7 +37,7 @@ module.exports = {
         }, function(err, result) {
             conf = result;
         });
-        //console.log('conf: ' + JSON.stringify(conf));
+        
         return {
             raw: conf,
             contentSrc: conf.widget.content[0].$.src,
