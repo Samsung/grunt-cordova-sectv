@@ -105,11 +105,13 @@ function confirmUseExistingData(userData, callback) {
     console.log('      > name               : ' + userData.name);
     console.log('      > version            : ' + userData.version);
     console.log('      > vendor             : ' + userData.vendor);
+    console.log('      > icon               : ' + userData.icon);
+    console.log('      > largeIcon          : ' + userData.largeicon);
     console.log('      > resolution         : ' + userData.resolution);
-    console.log('      > bgColor            : ' + userData.bgColor);
-    console.log('      > iconColor          : ' + userData.iconColor);
-    console.log('      > splashBackground   : ' + userData.splashBackground);
-    console.log('      > bgImage            : ' + userData.bgImage);
+    console.log('      > bgColor            : ' + userData.bgcolor);
+    console.log('      > iconColor          : ' + userData.iconcolor);
+    console.log('      > splashBackground   : ' + userData.splashbackground);
+    console.log('      > bgImage            : ' + userData.bgimage);
 
     var ask = [{
         type: 'confirm',
@@ -191,7 +193,7 @@ function askUserData(cordovaConf, callback, versionOnly, userData) {
             }
         }, {
             type: 'input',
-            name: 'bgImage',
+            name: 'bgimage',
             message: 'Background image path (default is \'img/logo.png\')',
             default: 'img/logo.png',
             validate: function(input) {
@@ -199,7 +201,7 @@ function askUserData(cordovaConf, callback, versionOnly, userData) {
             }
         }, {
             type: 'input',
-            name: 'splashBackground',
+            name: 'splashbackground',
             message: 'Splash screen background path (default is \'img/logo.png\')',
             default: 'img/logo.png',
             validate: function(input) {
@@ -207,7 +209,7 @@ function askUserData(cordovaConf, callback, versionOnly, userData) {
             }
         }, {
             type: 'input',
-            name: 'bgColor',
+            name: 'bgcolor',
             message: 'Background color for app',
             default: 'red',
             validate: function(input) {
@@ -215,7 +217,7 @@ function askUserData(cordovaConf, callback, versionOnly, userData) {
             }
         }, {
             type: 'input',
-            name: 'iconColor',
+            name: 'iconcolor',
             message: 'Icon color for app',
             default: 'red',
             validate: function(input) {
