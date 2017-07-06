@@ -101,11 +101,15 @@ function validateWebosVersion(version) {
 function confirmUseExistingData(userData, callback) {
     console.log('');
     console.log('      > [ Stored Information ]');
-    console.log('      > id          : ' + userData.id);
-    console.log('      > name        : ' + userData.name);
-    console.log('      > version     : ' + userData.version);
-    console.log('      > vendor      : ' + userData.vendor);
-    console.log('      > resolution  : ' + userData.resolution);
+    console.log('      > id                 : ' + userData.id);
+    console.log('      > name               : ' + userData.name);
+    console.log('      > version            : ' + userData.version);
+    console.log('      > vendor             : ' + userData.vendor);
+    console.log('      > resolution         : ' + userData.resolution);
+    console.log('      > bgColor            : ' + userData.bgColor);
+    console.log('      > iconColor          : ' + userData.iconColor);
+    console.log('      > splashBackground   : ' + userData.splashBackground);
+    console.log('      > bgImage            : ' + userData.bgImage);
 
     var ask = [{
         type: 'confirm',
@@ -184,6 +188,38 @@ function askUserData(cordovaConf, callback, versionOnly, userData) {
             default: 'img/logo.png',
             validate: function(input) {
                 return typeof(input) === 'string' ? true : 'invalid iconpath';
+            }
+        }, {
+            type: 'input',
+            name: 'bgImage',
+            message: 'Background image path (default is \'img/logo.png\')',
+            default: 'img/logo.png',
+            validate: function(input) {
+                return typeof(input) === 'string' ? true : 'invalid path';
+            }
+        }, {
+            type: 'input',
+            name: 'splashBackground',
+            message: 'Splash screen background path (default is \'img/logo.png\')',
+            default: 'img/logo.png',
+            validate: function(input) {
+                return typeof(input) === 'string' ? true : 'invalid path';
+            }
+        }, {
+            type: 'input',
+            name: 'bgColor',
+            message: 'Background color for app',
+            default: 'red',
+            validate: function(input) {
+                return typeof(input) === 'string' ? true : 'invalid color';
+            }
+        }, {
+            type: 'input',
+            name: 'iconColor',
+            message: 'Icon color for app',
+            default: 'red',
+            validate: function(input) {
+                return typeof(input) === 'string' ? true : 'invalid color';
             }
         }, {
             type: 'list',
