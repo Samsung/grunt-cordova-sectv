@@ -101,17 +101,11 @@ function validateWebosVersion(version) {
 function confirmUseExistingData(userData, callback) {
     console.log('');
     console.log('      > [ Stored Information ]');
-    console.log('      > id                 : ' + userData.id);
-    console.log('      > name               : ' + userData.name);
-    console.log('      > version            : ' + userData.version);
-    console.log('      > vendor             : ' + userData.vendor);
-    console.log('      > icon               : ' + userData.icon);
-    console.log('      > largeIcon          : ' + userData.largeicon);
-    console.log('      > resolution         : ' + userData.resolution);
-    console.log('      > bgColor            : ' + userData.bgcolor);
-    console.log('      > iconColor          : ' + userData.iconcolor);
-    console.log('      > splashBackground   : ' + userData.splashbackground);
-    console.log('      > bgImage            : ' + userData.bgimage);
+    console.log('      > id          : ' + userData.id);
+    console.log('      > name        : ' + userData.name);
+    console.log('      > version     : ' + userData.version);
+    console.log('      > vendor      : ' + userData.vendor);
+    console.log('      > resolution  : ' + userData.resolution);
 
     var ask = [{
         type: 'confirm',
@@ -211,7 +205,7 @@ function askUserData(cordovaConf, callback, versionOnly, userData) {
             type: 'input',
             name: 'bgcolor',
             message: 'Background color for app',
-            default: 'red',
+            default: 'white',
             validate: function(input) {
                 return typeof(input) === 'string' ? true : 'invalid color';
             }
@@ -219,7 +213,7 @@ function askUserData(cordovaConf, callback, versionOnly, userData) {
             type: 'input',
             name: 'iconcolor',
             message: 'Icon color for app',
-            default: 'red',
+            default: 'white',
             validate: function(input) {
                 return typeof(input) === 'string' ? true : 'invalid color';
             }
