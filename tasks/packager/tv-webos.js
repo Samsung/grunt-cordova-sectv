@@ -186,6 +186,38 @@ function askUserData(cordovaConf, callback, versionOnly, userData) {
                 return typeof(input) === 'string' ? true : 'invalid iconpath';
             }
         }, {
+            type: 'input',
+            name: 'bgimage',
+            message: 'Background image path (default is \'img/logo.png\')',
+            default: 'img/logo.png',
+            validate: function(input) {
+                return typeof(input) === 'string' ? true : 'invalid path';
+            }
+        }, {
+            type: 'input',
+            name: 'splashbackground',
+            message: 'Splash screen background path (default is \'img/logo.png\')',
+            default: 'img/logo.png',
+            validate: function(input) {
+                return typeof(input) === 'string' ? true : 'invalid path';
+            }
+        }, {
+            type: 'input',
+            name: 'bgcolor',
+            message: 'Background color for app',
+            default: 'white',
+            validate: function(input) {
+                return typeof(input) === 'string' ? true : 'invalid color';
+            }
+        }, {
+            type: 'input',
+            name: 'iconcolor',
+            message: 'Icon color for app',
+            default: 'white',
+            validate: function(input) {
+                return typeof(input) === 'string' ? true : 'invalid color';
+            }
+        }, {
             type: 'list',
             name: 'resolution',
             message: 'Which resolution does your application developed for?',
