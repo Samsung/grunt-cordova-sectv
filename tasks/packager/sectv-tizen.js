@@ -114,7 +114,7 @@ function confirmUseExistingData(userData, callback) {
         message: 'Already have \'userconf.json\', Do you want to use this data?'
     }];
 
-    inquirer.prompt(ask, function(answers) {
+    inquirer.prompt(ask).then(function(answers) {
         callback(!!answers.useExisting);
     });
 }
@@ -133,7 +133,7 @@ function askUserData(cordovaConf, callback, versionOnly, userData) {
                 return /\d.\d.\d/.test(input) ? true : 'invalid version string for tizen platform';
             }
         }];
-        inquirer.prompt(ask, function(answers) {
+        inquirer.prompt(ask).then(function(answers) {
             callback(answers);
         });
     }
@@ -176,7 +176,7 @@ function askUserData(cordovaConf, callback, versionOnly, userData) {
             message: 'Application Description',
             default: utils.trim(cordovaConf.description)
         }];
-        inquirer.prompt(ask, function(answers) {
+        inquirer.prompt(ask).then(function(answers) {
             callback(answers);
         });
     }
@@ -217,7 +217,7 @@ module.exports = {
 
         // necessary files for toast project
         var scripts = data.scripts;
-        
+
         // get data from cordova config.xml
         var cordovaConf = utils.getCordovaConfig();
 

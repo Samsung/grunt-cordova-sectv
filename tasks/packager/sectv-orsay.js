@@ -189,7 +189,7 @@ function confirmUseExistingData(userData, callback) {
         message: 'Already have \'userconf.json\', Do you want to use this data?'
     }];
 
-    inquirer.prompt(ask, function(answers) {
+    inquirer.prompt(ask).then(function(answers) {
         callback(!!answers.useExisting);
     });
 }
@@ -208,7 +208,7 @@ function askUserData(cordovaConf, callback, versionOnly, userData) {
                 return /^[0-9]+\.[0-9]+$/.test(input) ? true : 'invalid version string for orsay platform';
             }
         }];
-        inquirer.prompt(ask, function(answers) {
+        inquirer.prompt(ask).then(function(answers) {
             callback(answers);
         });
     }
@@ -299,7 +299,7 @@ function askUserData(cordovaConf, callback, versionOnly, userData) {
             message: 'Author\'s IRI(href)',
             default: cordovaConf.authorHref
         }];
-        inquirer.prompt(ask, function(answers) {
+        inquirer.prompt(ask).then(function(answers) {
             var config = answers;
 
             var tmp = config.resolution.split('x');
@@ -344,7 +344,7 @@ module.exports = {
 
         // original source
         var wwwSrc = path.resolve('www');
-        
+
         // necessary files for toast project
         var scripts = data.scripts;
 
