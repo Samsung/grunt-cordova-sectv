@@ -113,7 +113,7 @@ function confirmUseExistingData(userData, callback) {
         message: 'Already have \'userconf.json\', Do you want to use this data?'
     }];
 
-    inquirer.prompt(ask, function(answers) {
+    inquirer.prompt(ask).then(function(answers) {
         callback(!!answers.useExisting);
     });
 }
@@ -132,7 +132,7 @@ function askUserData(cordovaConf, callback, versionOnly, userData) {
                 return /\d.\d.\d/.test(input) ? true : 'invalid version string for webos platform';
             }
         }];
-        inquirer.prompt(ask, function(answers) {
+        inquirer.prompt(ask).then(function(answers) {
             callback(answers);
         });
     }
@@ -227,7 +227,7 @@ function askUserData(cordovaConf, callback, versionOnly, userData) {
                 '1920x1080'
             ]
         }];
-        inquirer.prompt(ask, function(answers) {
+        inquirer.prompt(ask).then(function(answers) {
             callback(answers);
         });
     }
