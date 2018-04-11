@@ -4,6 +4,8 @@
 We have a plan to change the code structure for this project hugely.
 If you want to get working well project, please use the latest released v1.3.0
 
+https://github.com/Samsung/grunt-cordova-sectv/releases/tag/v1.3.0
+
 # grunt-cordova-sectv
 Grunt task for prepare and build the cordova project with `sectv-***` platforms.
 
