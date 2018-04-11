@@ -1,5 +1,9 @@
 [![Build Status](https://travis-ci.org/Samsung/grunt-cordova-sectv.svg?branch=master)](https://travis-ci.org/Samsung/grunt-cordova-sectv)
 
+# Please Note That
+We have a plan to change the code structure for this project hugely.
+If you want to get working well project, please use the latest released v1.3.0
+
 # grunt-cordova-sectv
 Grunt task for prepare and build the cordova project with `sectv-***` platforms.
 
