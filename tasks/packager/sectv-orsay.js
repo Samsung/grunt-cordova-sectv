@@ -323,7 +323,7 @@ function getManualOrsayConfData(platformsData){
         for (i=0; i < platformsData.length; i++) {
             if (platformsData[i].$.name === 'sectv-orsay') {
                 delete platformsData[i].$;
-                manualOrsayConfData = utils.trim(js2xmlparser('platform',platformsData[i],{declaration : {include : false},attributeString : '$'}).replace(/<(\/?platform)>/igm,''));
+                manualOrsayConfData = utils.trim(js2xmlparser('platform',platformsData[i],{declaration : {include : false},attributeString : '$', valueString: '_'}).replace(/<(\/?platform)>/igm,''));
             }
         }
     }
