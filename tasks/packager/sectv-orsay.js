@@ -472,7 +472,7 @@ module.exports = {
         www = path.resolve(www);
         dest = path.resolve(dest);
 
-        var userConfPath = path.join('platforms', 'userconf.json');
+        var userConfPath = data.userConfPath || path.join('platforms', 'userconf.json');
 
         var projectName = 'package';
 

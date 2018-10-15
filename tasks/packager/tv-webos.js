@@ -274,7 +274,7 @@ module.exports = {
         var cordovaConf = utils.getCordovaConfig();
 
         // get data from userconf.json        
-        var userConfPath = path.join('platforms', 'userconf.json');
+        var userConfPath = data.userConfPath || path.join('platforms', 'userconf.json');
         var userData = getValidWebosConfData(userConfPath);
 
         if(userData) {
