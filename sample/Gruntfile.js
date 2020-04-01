@@ -4,18 +4,26 @@ module.exports = function(grunt) {
     grunt.initConfig({
         jshint: {
             options: {
-                jshintrc: '.jshintrc',
+                jshintrc: '.jshintrc'
             },
             src: ['www/**/*.js']
         },
-        clean: ['platforms/sectv-orsay/www/**/*' , 'platforms/sectv-orsay/build/*' , 'platforms/sectv-tizen/www/**/*' , 'platforms/sectv-tizen/build/*', 'platforms/tv-webos/www/**/*' , 'platforms/tv-webos/build/*'],
+        clean: [
+            'platforms/sectv-orsay/www/**/*',
+            'platforms/sectv-orsay/build/*',
+            'platforms/sectv-tizen/www/**/*',
+            'platforms/sectv-tizen/build/*',
+            'platforms/tv-webos/www/**/*',
+            'platforms/tv-webos/build/*'
+        ],
         'sectv-prepare': {
             'sectv-orsay': {
                 dest: 'platforms/sectv-orsay/www',
                 platformRepos: '../cordova-sectv-orsay',
                 scripts: {
                     'cordova.js': '../cordova-js/pkg/cordova.sectv-orsay.js',
-                    'toast.js': '../cordova-plugin-toast/platform_www/sectv-orsay/toast.js'
+                    'toast.js':
+                        '../cordova-plugin-toast/platform_www/sectv-orsay/toast.js'
                 }
             },
             'sectv-tizen': {
@@ -23,7 +31,8 @@ module.exports = function(grunt) {
                 platformRepos: '../cordova-sectv-tizen',
                 scripts: {
                     'cordova.js': '../cordova-js/pkg/cordova.sectv-tizen.js',
-                    'toast.js': '../cordova-plugin-toast/platform_www/sectv-tizen/toast.js'
+                    'toast.js':
+                        '../cordova-plugin-toast/platform_www/sectv-tizen/toast.js'
                 }
             },
             'tv-webos': {
@@ -31,7 +40,8 @@ module.exports = function(grunt) {
                 platformRepos: '../cordova-tv-webos',
                 scripts: {
                     'cordova.js': '../cordova-js/pkg/cordova.tv-webos.js',
-                    'toast.js': '../cordova-plugin-toast/platform_www/tv-webos/toast.js'
+                    'toast.js':
+                        '../cordova-plugin-toast/platform_www/tv-webos/toast.js'
                 }
             }
         },
@@ -41,7 +51,8 @@ module.exports = function(grunt) {
                 dest: 'platforms/sectv-orsay/build'
             },
             'sectv-tizen': {
-                profilePath: '/home/TizenSDK/.metadata/.plugins/org.tizen.common.sign/profiles.xml',
+                profilePath:
+                    '/home/TizenSDK/.metadata/.plugins/org.tizen.common.sign/profiles.xml',
                 profileName: 'myprofile',
                 www: 'platforms/sectv-tizen/www',
                 dest: 'platforms/sectv-tizen/build'
@@ -61,5 +72,10 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-cordova-sectv');
 
     // defaults
-    grunt.registerTask('default', ['jshint', 'clean', 'sectv-prepare', 'sectv-build']);
+    grunt.registerTask('default', [
+        'jshint',
+        'clean',
+        'sectv-prepare',
+        'sectv-build'
+    ]);
 };
