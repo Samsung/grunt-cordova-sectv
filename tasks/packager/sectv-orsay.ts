@@ -121,7 +121,7 @@ interface UserInputData {
 }
 
 interface CordovaConfigData {
-    raw: object;
+    raw: WidgetData;
     contentSrc: string;
     version: string;
     name: string;
@@ -132,12 +132,24 @@ interface CordovaConfigData {
     platform: PlatformProperty[];
 }
 
-interface PlatformProperty {
-    $: Platform;
-    'allow-intent': object[];
+interface WidgetData {
+    $: object;
+    name: string[];
+    description: string[];
+    author: string[];
+    content: string[];
+    plugin: string[];
+    access: string[];
+    'allow-intent': string[];
+    platform: string[];
 }
 
-interface Platform {
+interface PlatformProperty {
+    $: PlatformChild;
+    'allow-intent': string[];
+}
+
+interface PlatformChild {
     name: string;
 }
 
@@ -225,7 +237,9 @@ module.exports = {
         let projectName = `package`;
 
         if (fs.existsSync(USERCONFIG_PATH)) {
-            let userData = JSON.parse(fs.readFileSync(USERCONFIG_PATH));
+            let userData = JSON.parse(
+                fs.readFileSync(USERCONFIG_PATH).toString()
+            );
 
             if (userData.hasOwnProperty(`orsay`)) {
                 projectName = userData.orsay.name;
@@ -254,7 +268,7 @@ function saveUserConfigFile(configPath: string, data: object) {
         orsay: {}
     };
     if (isFileExist(configPath)) {
-        userConfigData = JSON.parse(fs.readFileSync(configPath));
+        userConfigData = JSON.parse(fs.readFileSync(configPath).toString());
     }
     userConfigData.orsay = data;
     fs.writeFileSync(configPath, JSON.stringify(userConfigData, null, 2), {
@@ -264,7 +278,7 @@ function saveUserConfigFile(configPath: string, data: object) {
 
 function getNextVersion(currentVersion: string) {
     console.log('');
-    let temp = currentVersion.split('.');
+    let temp = (currentVersion as string).split('.');
     let nextVersion = '';
 
     if (temp.length === ORSAY_VERSION_TYPE) {
@@ -321,7 +335,7 @@ function getValidOrsayConfigData(configPath: string) {
         return null;
     }
     // userconf.json is already exist
-    let userConfigData = JSON.parse(fs.readFileSync(configPath));
+    let userConfigData = JSON.parse(fs.readFileSync(configPath).toString());
 
     if (!userConfigData.hasOwnProperty('orsay')) {
         // userconf.json doesn't have orsay data
@@ -359,7 +373,7 @@ function getValidOrsayConfigData(configPath: string) {
 }
 
 function validateOrsayVersion(version: string) {
-    let temp = version.split(`.`);
+    let temp = (version as string).split(`.`);
     let i = 0;
     if (temp.length !== ORSAY_VERSION_TYPE) {
         return false;
@@ -383,7 +397,7 @@ function sementicToOrsay(sementicVersion: string) {
     const MINOR_LENGTH = 2;
     const REVISION_LENGTH = 3;
 
-    let temp = sementicVersion.split(`.`);
+    let temp = (sementicVersion as string).split(`.`);
 
     if (temp.length < REVISION_LENGTH) {
         return sementicVersion;
@@ -570,7 +584,7 @@ async function askUserData(
 
         let answer = await inquirer.prompt(ask);
         let result = answer;
-        let temp = result.resolution.split(`x`);
+        let temp = (result.resolution as string).split(`x`); //TS2339: Property 'split' does not exist on type '{}'
         result.resWidth = parseInt(temp[0], 10);
         result.resHeight = parseInt(temp[1], 10);
 
@@ -593,7 +607,7 @@ function prepareDirectory(directory: string) {
     mkdirp.sync(directory);
 }
 
-function getManualOrsayConfData(platformsData: object[]) {
+function getManualOrsayConfData(platformsData: PlatformProperty[]) {
     let i = 0;
     let manualOrsayConfData = {};
     if (platformsData) {

@@ -128,7 +128,7 @@ module.exports = {
         dest = path_1.default.resolve(dest);
         var projectName = "package";
         if (fs_1.default.existsSync(USERCONFIG_PATH)) {
-            var userData = JSON.parse(fs_1.default.readFileSync(USERCONFIG_PATH));
+            var userData = JSON.parse(fs_1.default.readFileSync(USERCONFIG_PATH).toString());
             if (userData.hasOwnProperty("orsay")) {
                 projectName = userData.orsay.name;
             }
@@ -149,7 +149,7 @@ function saveUserConfigFile(configPath, data) {
         orsay: {}
     };
     if (isFileExist(configPath)) {
-        userConfigData = JSON.parse(fs_1.default.readFileSync(configPath));
+        userConfigData = JSON.parse(fs_1.default.readFileSync(configPath).toString());
     }
     userConfigData.orsay = data;
     fs_1.default.writeFileSync(configPath, JSON.stringify(userConfigData, null, 2), {
@@ -206,7 +206,7 @@ function getValidOrsayConfigData(configPath) {
         return null;
     }
     // userconf.json is already exist
-    var userConfigData = JSON.parse(fs_1.default.readFileSync(configPath));
+    var userConfigData = JSON.parse(fs_1.default.readFileSync(configPath).toString());
     if (!userConfigData.hasOwnProperty('orsay')) {
         // userconf.json doesn't have orsay data
         return null;
