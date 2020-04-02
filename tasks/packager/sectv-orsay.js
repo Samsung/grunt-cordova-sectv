@@ -1,4 +1,19 @@
 "use strict";
+/*
+ * Copyright 2015 Samsung Electronics Co., Ltd.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -35,38 +50,28 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-/*
- * Copyright 2015 Samsung Electronics Co., Ltd.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-var fs = require("fs"); //npm install @types/node
-var path = require("path");
-var mkdirp = require("mkdirp");
-var inquirer = require("inquirer");
-var utils = require("../lib/utils");
-var shelljs = require("shelljs");
-var mustache = require("mustache");
-var grunt = require("grunt");
-var zipdir = require("zip-dir");
-var js2xmlparser = require("js2xmlparser");
-var revisionLength = 3;
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+// [@고민:1] require 혹은 import
+var utils = require('../lib/utils');
+var zipdir = require('zip-dir');
+var js2xmlparser = require('js2xmlparser');
+var fs_1 = __importDefault(require("fs")); //npm install @types/node
+var path_1 = __importDefault(require("path")); //npm install @types/node
+var mkdirp_1 = __importDefault(require("mkdirp"));
+var inquirer_1 = __importDefault(require("inquirer"));
+var shelljs_1 = __importDefault(require("shelljs"));
+var mustache_1 = __importDefault(require("mustache"));
+var grunt_1 = __importDefault(require("grunt"));
 var ORSAY_VERSION_TYPE = 2;
 var SEMATIC_VERSION_TYPE = 3;
 var PREPARE_DIRECTORY = "www";
 var INDEX_HTML = "index.html";
-var USERCONFIG_PATH = path.join("platforms", "userconf.json");
+var USERCONFIG_PATH = path_1.default.join("platforms", "userconf.json");
 var PLATFORM_ORSAY = "sectv-orsay";
+var revisionLength = 3;
 module.exports = {
     prepare: function (success, error, platformName, data) {
         return __awaiter(this, void 0, void 0, function () {
@@ -75,12 +80,12 @@ module.exports = {
                 switch (_a.label) {
                     case 0:
                         console.log("\nStart preparing codes for Legacy Samsung Smart TV Platform......");
-                        dest = path.resolve(data.dest || path.join("platforms", platformName, PREPARE_DIRECTORY));
+                        dest = path_1.default.resolve(data.dest || path_1.default.join("platforms", platformName, PREPARE_DIRECTORY));
                         return [4 /*yield*/, utils.getCordovaConfig()];
                     case 1:
                         config = _a.sent();
                         platformRepos = data.platformRepos || "../cordova-" + platformName;
-                        platformRepos = path.resolve(platformRepos);
+                        platformRepos = path_1.default.resolve(platformRepos);
                         userData = getValidOrsayConfigData(USERCONFIG_PATH);
                         VERSION_ONLY = true;
                         ENTIRE = false;
@@ -117,23 +122,23 @@ module.exports = {
     },
     build: function (success, error, data) {
         console.log("\nStart packaging Legacy Samsung Smart TV Platform......");
-        var www = data.www || path.join("platforms", PLATFORM_ORSAY, "www");
-        var dest = data.dest || path.join("platforms", PLATFORM_ORSAY, "build");
-        www = path.resolve(www);
-        dest = path.resolve(dest);
+        var www = data.www || path_1.default.join("platforms", PLATFORM_ORSAY, "www");
+        var dest = data.dest || path_1.default.join("platforms", PLATFORM_ORSAY, "build");
+        www = path_1.default.resolve(www);
+        dest = path_1.default.resolve(dest);
         var projectName = "package";
-        if (fs.existsSync(USERCONFIG_PATH)) {
-            var userData = JSON.parse(fs.readFileSync(USERCONFIG_PATH));
+        if (fs_1.default.existsSync(USERCONFIG_PATH)) {
+            var userData = JSON.parse(fs_1.default.readFileSync(USERCONFIG_PATH));
             if (userData.hasOwnProperty("orsay")) {
                 projectName = userData.orsay.name;
             }
         }
         else {
-            grunt.log.error("Prepare the project first.");
+            grunt_1.default.log.error("Prepare the project first.");
         }
-        fs.mkdir(dest, function () {
-            zipdir(www, { saveTo: path.join(dest, projectName + ".zip") }, function () {
-                console.log("Package created at " + path.join(dest, projectName));
+        fs_1.default.mkdir(dest, function () {
+            zipdir(www, { saveTo: path_1.default.join(dest, projectName + ".zip") }, function () {
+                console.log("Package created at " + path_1.default.join(dest, projectName));
                 success && success();
             });
         });
@@ -144,10 +149,10 @@ function saveUserConfigFile(configPath, data) {
         orsay: {}
     };
     if (isFileExist(configPath)) {
-        userConfigData = JSON.parse(fs.readFileSync(configPath));
+        userConfigData = JSON.parse(fs_1.default.readFileSync(configPath));
     }
     userConfigData.orsay = data;
-    fs.writeFileSync(configPath, JSON.stringify(userConfigData, null, 2), {
+    fs_1.default.writeFileSync(configPath, JSON.stringify(userConfigData, null, 2), {
         encoding: "utf8"
     });
 }
@@ -201,7 +206,7 @@ function getValidOrsayConfigData(configPath) {
         return null;
     }
     // userconf.json is already exist
-    var userConfigData = JSON.parse(fs.readFileSync(configPath));
+    var userConfigData = JSON.parse(fs_1.default.readFileSync(configPath));
     if (!userConfigData.hasOwnProperty('orsay')) {
         // userconf.json doesn't have orsay data
         return null;
@@ -291,7 +296,7 @@ function getConfirmAskData(userData) {
                             default: true
                         }
                     ];
-                    return [4 /*yield*/, inquirer.prompt(ask)];
+                    return [4 /*yield*/, inquirer_1.default.prompt(ask)];
                 case 1:
                     answer = _a.sent();
                     return [2 /*return*/, answer.isCorrectInfo];
@@ -322,7 +327,7 @@ function askUserData(cordovaConf, userData, versionOnly) {
                             }
                         }
                     ];
-                    return [4 /*yield*/, inquirer.prompt(ask)];
+                    return [4 /*yield*/, inquirer_1.default.prompt(ask)];
                 case 1:
                     answer = _a.sent();
                     return [2 /*return*/, answer];
@@ -439,7 +444,7 @@ function askUserData(cordovaConf, userData, versionOnly) {
                             default: cordovaConf.authorHref
                         }
                     ];
-                    return [4 /*yield*/, inquirer.prompt(ask)];
+                    return [4 /*yield*/, inquirer_1.default.prompt(ask)];
                 case 3:
                     answer = _a.sent();
                     result = answer;
@@ -462,7 +467,7 @@ function displayData(userData) {
     console.log("");
 }
 function prepareDirectory(directory) {
-    mkdirp.sync(directory);
+    mkdirp_1.default.sync(directory);
 }
 function getManualOrsayConfData(platformsData) {
     var i = 0;
@@ -487,8 +492,8 @@ function buildProject(success, error, dest, userData, data, platformRepos) {
     replaceTemplates(dest, userData) || (error && error());
     console.log("Prepared at " + dest);
     // warning for existing meta tag for csp setting
-    var targetFile = path.join(path.resolve(PREPARE_DIRECTORY), INDEX_HTML);
-    var target = fs.readFileSync(targetFile, {
+    var targetFile = path_1.default.join(path_1.default.resolve(PREPARE_DIRECTORY), INDEX_HTML);
+    var target = fs_1.default.readFileSync(targetFile, {
         encoding: "utf8"
     });
     if (target.match(/(<meta.*)(http-equiv)(.*=*.)("Content-Security-Policy"|'Content-Security-Policy')/)) {
@@ -500,59 +505,59 @@ function buildProject(success, error, dest, userData, data, platformRepos) {
     success && success();
 }
 function copySrcToDest(dest, scripts) {
-    var wwwSrc = path.resolve(PREPARE_DIRECTORY);
+    var wwwSrc = path_1.default.resolve(PREPARE_DIRECTORY);
     var cordovaConf = utils.getCordovaConfig();
     prepareDirectory(dest);
     for (var key in scripts) {
         if (scripts.hasOwnProperty(key)) {
-            var to = path.join(dest, key);
-            var from = path.resolve(scripts[key]);
-            shelljs.cp("-f", from, to);
-            if (!fs.existsSync(from)) {
+            var to = path_1.default.join(dest, key);
+            var from = path_1.default.resolve(scripts[key]);
+            shelljs_1.default.cp("-f", from, to);
+            if (!fs_1.default.existsSync(from)) {
                 throw Error("cordova.js, toast.js file are not exist.");
             }
         }
     }
-    shelljs.cp("-rf", path.join(wwwSrc, "*"), dest);
+    shelljs_1.default.cp("-rf", path_1.default.join(wwwSrc, "*"), dest);
     if (cordovaConf.contentSrc !== INDEX_HTML) {
-        if (fs.existsSync(path.join(dest, INDEX_HTML))) {
-            grunt.log.error("Initial content, which is pointed by 'content' tag in the 'config.xml'), is not 'index.html', but another 'index.html' is already exist in the source!");
+        if (fs_1.default.existsSync(path_1.default.join(dest, INDEX_HTML))) {
+            grunt_1.default.log.error("Initial content, which is pointed by 'content' tag in the 'config.xml'), is not 'index.html', but another 'index.html' is already exist in the source!");
             return false;
         }
-        shelljs.mv(path.join(dest, cordovaConf.contentSrc), path.join(dest, INDEX_HTML));
+        shelljs_1.default.mv(path_1.default.join(dest, cordovaConf.contentSrc), path_1.default.join(dest, INDEX_HTML));
     }
     return true;
 }
 function buildPlatformAdditions(platformRepos, dest) {
-    shelljs.cp('-rf', path.join(platformRepos, PREPARE_DIRECTORY, '*'), dest);
+    shelljs_1.default.cp('-rf', path_1.default.join(platformRepos, PREPARE_DIRECTORY, '*'), dest);
     // hack: copying hidden files(starts with dot) at root('www') to the dest directory.
     // if the dest is not exist, we can copy the platform files without this hack by using this command: cp -rf <PLATFORMREPOS>/www <destDir>
     // But the dest directory has the application files at this moment. So we need to use this hack.
-    shelljs.cp('-rf', path.join(platformRepos, PREPARE_DIRECTORY, '.*'), dest);
+    shelljs_1.default.cp('-rf', path_1.default.join(platformRepos, PREPARE_DIRECTORY, '.*'), dest);
     return true;
 }
 function replaceTemplates(dest, userData) {
-    var files = fs.readdirSync(dest);
+    var files = fs_1.default.readdirSync(dest);
     for (var i = 0; i < files.length; i++) {
         var fileName = files[i];
         if (fileName.match(/\.tmpl$/)) {
-            var tmplFilePath = path.join(dest, fileName);
-            var destFilePath = path.join(dest, fileName.replace(/\.tmpl$/, ""));
-            var template = fs.readFileSync(tmplFilePath, {
+            var tmplFilePath = path_1.default.join(dest, fileName);
+            var destFilePath = path_1.default.join(dest, fileName.replace(/\.tmpl$/, ""));
+            var template = fs_1.default.readFileSync(tmplFilePath, {
                 encoding: "utf8"
             });
-            var rendered = mustache.render(template, userData);
-            fs.writeFileSync(destFilePath, rendered, {
+            var rendered = mustache_1.default.render(template, userData);
+            fs_1.default.writeFileSync(destFilePath, rendered, {
                 encoding: "utf8"
             });
-            shelljs.rm(path.join(dest, fileName));
+            shelljs_1.default.rm(path_1.default.join(dest, fileName));
         }
     }
     return true;
 }
 function isFileExist(filePath) {
     try {
-        fs.accessSync(filePath);
+        fs_1.default.accessSync(filePath);
         return true;
     }
     catch (e) {

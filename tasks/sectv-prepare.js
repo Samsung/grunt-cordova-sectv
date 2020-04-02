@@ -20,14 +20,19 @@ module.exports = function(grunt) {
     grunt.registerMultiTask('sectv-prepare', 'prepare sectv apps', function() {
         var platformName = this.target;
 
-        var packager = require('./packager/'+platformName);
+        var packager = require('./packager/' + platformName);
         var done = this.async();
-        
+
         // prepare: function(successCallback, errorCallback, platformName, data)
-        packager.prepare(function () {
-            done();
-        }, function () {
-            done();
-        }, this.target, this.data);
+        packager.prepare(
+            function() {
+                done();
+            },
+            function() {
+                done();
+            },
+            this.target,
+            this.data
+        );
     });
 };

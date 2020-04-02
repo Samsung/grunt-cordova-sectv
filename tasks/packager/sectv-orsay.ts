@@ -13,31 +13,161 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const fs = require(`fs`); //npm install @types/node
-const path = require(`path`);
-const mkdirp = require(`mkdirp`);
-const inquirer = require(`inquirer`);
-const utils = require(`../lib/utils`);
-const shelljs = require(`shelljs`);
-const mustache = require(`mustache`);
-const grunt = require(`grunt`);
-const zipdir = require(`zip-dir`);
-const js2xmlparser = require(`js2xmlparser`);
 
-let revisionLength = 3;
+/*
+TargetPrepareData => 
+this.data {
+  dest: 'platforms/sectv-orsay/www',
+  platformRepos: '../cordova-sectv-orsay',
+  scripts: {
+    'cordova.js': '../cordova-js/pkg/cordova.sectv-orsay.js',
+    'toast.js': '../cordova-plugin-toast/platform_www/sectv-orsay/toast.js'
+  }
+}
+*/
+/*
+TargetBuildData => 
+this.data {
+    www: 'platforms/sectv-orsay/www',
+    dest: 'platforms/sectv-orsay/build'
+}
+*/
+
+/*
+UserInputData => 
+{
+  name: 'ToastApp',
+  resolution: '960x540',
+  category: 'VOD',
+  version: '1.0002',
+  thumbicon: 'img/logo.png',
+  bigthumbicon: 'img/logo.png',
+  listicon: 'img/logo.png',
+  biglisticon: 'img/logo.png',
+  description: 'A sample Apache Cordova application that responds to the deviceready event.',
+  authorName: 'Apache Cordova Team',
+  authorEmail: 'dev@cordova.apache.org',
+  authorHref: 'http://cordova.io',
+  resWidth: 960,
+  resHeight: 540,
+  manualConfData: {}
+}
+*/
+/*
+CordovaConfigData =>
+{
+  raw: {
+    widget: {
+      '$': [Object],
+      name: [Array],
+      description: [Array],
+      author: [Array],
+      content: [Array],
+      plugin: [Array],
+      access: [Array],
+      'allow-intent': [Array],
+      platform: [Array]
+    }
+  },
+  contentSrc: 'index.html',
+  version: '1.0.0',
+  name: 'HelloCordova',
+  description: [
+    '\n' +
+      '        A sample Apache Cordova application that responds to the deviceready event.\n' +
+      '    '
+  ],
+  authorName: 'Apache Cordova Team',
+  authorEmail: 'dev@cordova.apache.org',
+  authorHref: 'http://cordova.io',
+  platform: [
+    { '$': [Object], 'allow-intent': [Array] },
+    { '$': [Object], 'allow-intent': [Array] }
+  ]
+}
+*/
+
+interface TargetPrepareData {
+    dest: string;
+    platformRepos: string;
+    scripts: TargetDataScript;
+}
+
+interface TargetBuildData {
+    www: string;
+    dest: string;
+}
+
+interface TargetDataScript {
+    [key: string]: string;
+}
+
+interface UserInputData {
+    name: string;
+    resolution: string;
+    category: string;
+    version: string;
+    thumbicon: string;
+    bigthumbicon: string;
+    listicon: string;
+    biglisticon: string;
+    description: string;
+    authorName: string;
+    authorEmail: string;
+    authorHref: string;
+    resWidth: number;
+    resHeight: number;
+    manualConfData: object;
+}
+
+interface CordovaConfigData {
+    raw: object;
+    contentSrc: string;
+    version: string;
+    name: string;
+    description: any; //이건 무슨타입이죠
+    authorName: string;
+    authorEmail: string;
+    authorHref: string;
+    platform: PlatformProperty[];
+}
+
+interface PlatformProperty {
+    $: Platform;
+    'allow-intent': object[];
+}
+
+interface Platform {
+    name: string;
+}
+
+// [@고민:1] require 혹은 import
+const utils = require('../lib/utils');
+const zipdir = require('zip-dir');
+const js2xmlparser = require('js2xmlparser');
+
+import fs from 'fs'; //npm install @types/node
+import path from 'path'; //npm install @types/node
+import mkdirp from 'mkdirp';
+import inquirer from 'inquirer';
+import shelljs from 'shelljs';
+import mustache from 'mustache';
+import grunt from 'grunt';
+
 const ORSAY_VERSION_TYPE = 2;
 const SEMATIC_VERSION_TYPE = 3;
 const PREPARE_DIRECTORY = `www`;
 const INDEX_HTML = `index.html`;
 const USERCONFIG_PATH = path.join(`platforms`, `userconf.json`);
 const PLATFORM_ORSAY = `sectv-orsay`;
+let revisionLength = 3;
 
 module.exports = {
     prepare: async function(
         success: any,
         error: any,
         platformName: string,
-        data: object
+        data: TargetPrepareData
     ) {
         console.log(
             `\nStart preparing codes for Legacy Samsung Smart TV Platform......`
@@ -84,7 +214,7 @@ module.exports = {
         }
         buildProject(success, error, dest, userData, data, platformRepos);
     },
-    build: function(success: any, error: any, data: object) {
+    build: function(success: Function, error: Function, data: TargetBuildData) {
         console.log(`\nStart packaging Legacy Samsung Smart TV Platform......`);
         let www = data.www || path.join(`platforms`, PLATFORM_ORSAY, `www`);
         let dest = data.dest || path.join(`platforms`, PLATFORM_ORSAY, `build`);
@@ -282,7 +412,7 @@ function sementicToOrsay(sementicVersion: string) {
     return major + '.' + minor + revision;
 }
 
-async function getConfirmAskData(userData: object) {
+async function getConfirmAskData(userData: UserInputData) {
     displayData(userData);
 
     let ask = [
@@ -299,8 +429,8 @@ async function getConfirmAskData(userData: object) {
 }
 
 async function askUserData(
-    cordovaConf: object,
-    userData: object,
+    cordovaConf: CordovaConfigData,
+    userData: UserInputData,
     versionOnly: boolean
 ) {
     let ask = [];
@@ -448,7 +578,7 @@ async function askUserData(
     }
 }
 
-function displayData(userData: object) {
+function displayData(userData: UserInputData) {
     console.log(``);
     console.log(`      > [ Stored Information ]`);
     console.log(`      > name        : ${userData.name}`);
@@ -486,11 +616,11 @@ function buildProject(
     success: any,
     error: any,
     dest: string,
-    userData: object,
-    data: object,
+    userData: UserInputData,
+    data: TargetPrepareData,
     platformRepos: string
 ) {
-    let scripts = data.scripts;
+    const scripts = data.scripts;
     copySrcToDest(dest, scripts) || (error && error());
     buildPlatformAdditions(platformRepos, dest) || (error && error());
     replaceTemplates(dest, userData) || (error && error());
@@ -520,7 +650,7 @@ function buildProject(
     success && success();
 }
 
-function copySrcToDest(dest: string, scripts: object[]) {
+function copySrcToDest(dest: string, scripts: TargetDataScript) {
     let wwwSrc = path.resolve(PREPARE_DIRECTORY);
     let cordovaConf = utils.getCordovaConfig();
 

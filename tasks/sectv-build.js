@@ -17,17 +17,25 @@
 'use strict';
 
 module.exports = function(grunt) {
-    grunt.registerMultiTask('sectv-build', 'build and package sectv apps', function() {
-        var platformName = this.target;
+    grunt.registerMultiTask(
+        'sectv-build',
+        'build and package sectv apps',
+        function() {
+            var platformName = this.target;
 
-        var packager = require('./packager/'+platformName);
-        var done = this.async();
+            var packager = require('./packager/' + platformName);
+            var done = this.async();
 
-        // build: function(successCallback, errorCallback, data)
-        packager.build(function () {
-            done();
-        }, function () {
-            done();
-        }, this.data);
-    });
+            // build: function(successCallback, errorCallback, data)
+            packager.build(
+                function() {
+                    done();
+                },
+                function() {
+                    done();
+                },
+                this.data
+            );
+        }
+    );
 };

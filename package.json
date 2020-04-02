@@ -33,5 +33,12 @@
     ],
     "files": [
         "tasks"
-    ]
+    ],
+    "devDependencies": {
+        "@types/grunt": "^0.4.25",
+        "@types/inquirer": "^6.5.0",
+        "@types/mkdirp": "^1.0.0",
+        "@types/mustache": "^4.0.1",
+        "@types/shelljs": "^0.8.7"
+    }
 }
