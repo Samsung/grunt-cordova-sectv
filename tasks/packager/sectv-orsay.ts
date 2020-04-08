@@ -175,9 +175,9 @@ const PLATFORM_ORSAY = `sectv-orsay`;
 let revisionLength = 3;
 
 module.exports = {
-    prepare: async function(
-        success: any,
-        error: any,
+    prepare: async function (
+        success: Function,
+        error: Function,
         platformName: string,
         data: TargetPrepareData
     ) {
@@ -226,7 +226,11 @@ module.exports = {
         }
         buildProject(success, error, dest, userData, data, platformRepos);
     },
-    build: function(success: Function, error: Function, data: TargetBuildData) {
+    build: function (
+        success: Function,
+        error: Function,
+        data: TargetBuildData
+    ) {
         console.log(`\nStart packaging Legacy Samsung Smart TV Platform......`);
         let www = data.www || path.join(`platforms`, PLATFORM_ORSAY, `www`);
         let dest = data.dest || path.join(`platforms`, PLATFORM_ORSAY, `build`);
@@ -248,11 +252,11 @@ module.exports = {
             grunt.log.error(`Prepare the project first.`);
         }
 
-        fs.mkdir(dest, function() {
+        fs.mkdir(dest, function () {
             zipdir(
                 www,
                 { saveTo: path.join(dest, `${projectName}.zip`) },
-                function() {
+                function () {
                     console.log(
                         `Package created at ${path.join(dest, projectName)}`
                     );
@@ -260,19 +264,19 @@ module.exports = {
                 }
             );
         });
-    }
+    },
 };
 
 function saveUserConfigFile(configPath: string, data: object) {
     let userConfigData = {
-        orsay: {}
+        orsay: {},
     };
     if (isFileExist(configPath)) {
         userConfigData = JSON.parse(fs.readFileSync(configPath).toString());
     }
     userConfigData.orsay = data;
     fs.writeFileSync(configPath, JSON.stringify(userConfigData, null, 2), {
-        encoding: `utf8`
+        encoding: `utf8`,
     });
 }
 
@@ -434,8 +438,8 @@ async function getConfirmAskData(userData: UserInputData) {
             type: `confirm`,
             name: `isCorrectInfo`,
             message: `"userconf.json" is already exist. Do you want to use this data?`,
-            default: true
-        }
+            default: true,
+        },
     ];
 
     let answer = await inquirer.prompt(ask);
@@ -457,12 +461,12 @@ async function askUserData(
                 name: `version`,
                 message: `current version is ${currentVersion}. Application version: `,
                 default: updateVersion,
-                validate: function(input: string) {
+                validate: function (input: string) {
                     return /^[0-9]+\.[0-9]+$/.test(input)
                         ? true
                         : `invalid version string for orsay platform`;
-                }
-            }
+                },
+            },
         ];
         let answer = await inquirer.prompt(ask);
         return answer;
@@ -473,20 +477,20 @@ async function askUserData(
                 name: `name`,
                 message: `What's the application's name?`,
                 default: cordovaConf.name,
-                validate: function(input: string) {
+                validate: function (input: string) {
                     return /^[a-zA-Z][^~!\.\;\\\/\|\"\'@\#$%<>^&*\()\-=+_\’\n\t\s]*$/.test(
                         input
                     )
                         ? true
                         : `invalid name for orsay platform`;
-                }
+                },
             },
             {
                 type: `list`,
                 name: `resolution`,
                 message: `Which resolution does your application developed for?`,
                 default: `960x540`,
-                choices: [`960x540`, `1280x720`, `1920x1080`]
+                choices: [`960x540`, `1280x720`, `1920x1080`],
             },
             {
                 type: `list`,
@@ -498,88 +502,88 @@ async function askUserData(
                     `game`,
                     `lifestyle`,
                     `information`,
-                    `education`
-                ]
+                    `education`,
+                ],
             },
             {
                 type: `input`,
                 name: `version`,
                 message: `Application Version(Valid RegExp: ^[0-9]+.[0-9]+$)`,
                 default: sementicToOrsay(cordovaConf.version),
-                validate: function(input: string) {
+                validate: function (input: string) {
                     return /^[0-9]+\.[0-9]+$/.test(input)
                         ? true
                         : `invalid version string for orsay platform`;
-                }
+                },
             },
             {
                 type: `input`,
                 name: `thumbicon`,
                 message: `ThumbIcon path (default is 'img/logo.png')`,
                 default: `img/logo.png`,
-                validate: function(input: string) {
+                validate: function (input: string) {
                     return typeof input === `string`
                         ? true
                         : `invalid iconpath`;
-                }
+                },
             },
             {
                 type: `input`,
                 name: `bigthumbicon`,
                 message: `BigThumbIcon path (default is 'img/logo.png')`,
                 default: `img/logo.png`,
-                validate: function(input: string) {
+                validate: function (input: string) {
                     return typeof input === `string`
                         ? true
                         : `invalid iconpath`;
-                }
+                },
             },
             {
                 type: `input`,
                 name: `listicon`,
                 message: `ListIcon path (default is 'img/logo.png')`,
                 default: `img/logo.png`,
-                validate: function(input: string) {
+                validate: function (input: string) {
                     return typeof input === `string`
                         ? true
                         : `invalid iconpath`;
-                }
+                },
             },
             {
                 type: `input`,
                 name: `biglisticon`,
                 message: `BigListIcon path (default is 'img/logo.png')`,
                 default: `img/logo.png`,
-                validate: function(input: string) {
+                validate: function (input: string) {
                     return typeof input === `string`
                         ? true
                         : `invalid iconpath`;
-                }
+                },
             },
             {
                 type: `input`,
                 name: `description`,
                 message: `Application Description`,
-                default: utils.trim(cordovaConf.description)
+                default: utils.trim(cordovaConf.description),
             },
             {
                 type: `input`,
                 name: `authorName`,
                 message: `Author's name`,
-                default: cordovaConf.authorName
+                default: cordovaConf.authorName,
             },
             {
                 type: `input`,
                 name: `authorEmail`,
                 message: `Author's email`,
-                default: cordovaConf.authorEmail
+                default: cordovaConf.authorEmail,
             },
             {
                 type: `input`,
                 name: `authorHref`,
                 message: `Author's IRI(href)`,
-                default: cordovaConf.authorHref
-            }
+                default: cordovaConf.authorHref,
+            },
         ];
 
         let answer = await inquirer.prompt(ask);
@@ -617,7 +621,7 @@ function getManualOrsayConfData(platformsData: PlatformProperty[]) {
                 manualOrsayConfData = utils.trim(
                     js2xmlparser('platform', platformsData[i], {
                         declaration: { include: false },
-                        attributeString: '$'
+                        attributeString: '$',
                     }).replace(/<(\/?platform)>/gim, '')
                 );
             }
@@ -627,8 +631,8 @@ function getManualOrsayConfData(platformsData: PlatformProperty[]) {
 }
 
 function buildProject(
-    success: any,
-    error: any,
+    success: Function,
+    error: Function,
     dest: string,
     userData: UserInputData,
     data: TargetPrepareData,
@@ -643,7 +647,7 @@ function buildProject(
     // warning for existing meta tag for csp setting
     const targetFile = path.join(path.resolve(PREPARE_DIRECTORY), INDEX_HTML);
     let target = fs.readFileSync(targetFile, {
-        encoding: `utf8`
+        encoding: `utf8`,
     });
 
     if (
@@ -717,11 +721,11 @@ function replaceTemplates(dest: string, userData: object) {
             let tmplFilePath = path.join(dest, fileName);
             let destFilePath = path.join(dest, fileName.replace(/\.tmpl$/, ``));
             let template = fs.readFileSync(tmplFilePath, {
-                encoding: `utf8`
+                encoding: `utf8`,
             });
             let rendered = mustache.render(template, userData);
             fs.writeFileSync(destFilePath, rendered, {
-                encoding: `utf8`
+                encoding: `utf8`,
             });
             shelljs.rm(path.join(dest, fileName));
         }

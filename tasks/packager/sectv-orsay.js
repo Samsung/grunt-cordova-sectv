@@ -142,18 +142,18 @@ module.exports = {
                 success && success();
             });
         });
-    }
+    },
 };
 function saveUserConfigFile(configPath, data) {
     var userConfigData = {
-        orsay: {}
+        orsay: {},
     };
     if (isFileExist(configPath)) {
         userConfigData = JSON.parse(fs_1.default.readFileSync(configPath).toString());
     }
     userConfigData.orsay = data;
     fs_1.default.writeFileSync(configPath, JSON.stringify(userConfigData, null, 2), {
-        encoding: "utf8"
+        encoding: "utf8",
     });
 }
 function getNextVersion(currentVersion) {
@@ -293,8 +293,8 @@ function getConfirmAskData(userData) {
                             type: "confirm",
                             name: "isCorrectInfo",
                             message: "\"userconf.json\" is already exist. Do you want to use this data?",
-                            default: true
-                        }
+                            default: true,
+                        },
                     ];
                     return [4 /*yield*/, inquirer_1.default.prompt(ask)];
                 case 1:
@@ -324,8 +324,8 @@ function askUserData(cordovaConf, userData, versionOnly) {
                                 return /^[0-9]+\.[0-9]+$/.test(input)
                                     ? true
                                     : "invalid version string for orsay platform";
-                            }
-                        }
+                            },
+                        },
                     ];
                     return [4 /*yield*/, inquirer_1.default.prompt(ask)];
                 case 1:
@@ -342,14 +342,14 @@ function askUserData(cordovaConf, userData, versionOnly) {
                                 return /^[a-zA-Z][^~!\.\;\\\/\|\"\'@\#$%<>^&*\()\-=+_\’\n\t\s]*$/.test(input)
                                     ? true
                                     : "invalid name for orsay platform";
-                            }
+                            },
                         },
                         {
                             type: "list",
                             name: "resolution",
                             message: "Which resolution does your application developed for?",
                             default: "960x540",
-                            choices: ["960x540", "1280x720", "1920x1080"]
+                            choices: ["960x540", "1280x720", "1920x1080"],
                         },
                         {
                             type: "list",
@@ -361,8 +361,8 @@ function askUserData(cordovaConf, userData, versionOnly) {
                                 "game",
                                 "lifestyle",
                                 "information",
-                                "education"
-                            ]
+                                "education",
+                            ],
                         },
                         {
                             type: "input",
@@ -373,7 +373,7 @@ function askUserData(cordovaConf, userData, versionOnly) {
                                 return /^[0-9]+\.[0-9]+$/.test(input)
                                     ? true
                                     : "invalid version string for orsay platform";
-                            }
+                            },
                         },
                         {
                             type: "input",
@@ -384,7 +384,7 @@ function askUserData(cordovaConf, userData, versionOnly) {
                                 return typeof input === "string"
                                     ? true
                                     : "invalid iconpath";
-                            }
+                            },
                         },
                         {
                             type: "input",
@@ -395,7 +395,7 @@ function askUserData(cordovaConf, userData, versionOnly) {
                                 return typeof input === "string"
                                     ? true
                                     : "invalid iconpath";
-                            }
+                            },
                         },
                         {
                             type: "input",
@@ -406,7 +406,7 @@ function askUserData(cordovaConf, userData, versionOnly) {
                                 return typeof input === "string"
                                     ? true
                                     : "invalid iconpath";
-                            }
+                            },
                         },
                         {
                             type: "input",
@@ -417,32 +417,32 @@ function askUserData(cordovaConf, userData, versionOnly) {
                                 return typeof input === "string"
                                     ? true
                                     : "invalid iconpath";
-                            }
+                            },
                         },
                         {
                             type: "input",
                             name: "description",
                             message: "Application Description",
-                            default: utils.trim(cordovaConf.description)
+                            default: utils.trim(cordovaConf.description),
                         },
                         {
                             type: "input",
                             name: "authorName",
                             message: "Author's name",
-                            default: cordovaConf.authorName
+                            default: cordovaConf.authorName,
                         },
                         {
                             type: "input",
                             name: "authorEmail",
                             message: "Author's email",
-                            default: cordovaConf.authorEmail
+                            default: cordovaConf.authorEmail,
                         },
                         {
                             type: "input",
                             name: "authorHref",
                             message: "Author's IRI(href)",
-                            default: cordovaConf.authorHref
-                        }
+                            default: cordovaConf.authorHref,
+                        },
                     ];
                     return [4 /*yield*/, inquirer_1.default.prompt(ask)];
                 case 3:
@@ -478,7 +478,7 @@ function getManualOrsayConfData(platformsData) {
                 delete platformsData[i].$;
                 manualOrsayConfData = utils.trim(js2xmlparser('platform', platformsData[i], {
                     declaration: { include: false },
-                    attributeString: '$'
+                    attributeString: '$',
                 }).replace(/<(\/?platform)>/gim, ''));
             }
         }
@@ -494,7 +494,7 @@ function buildProject(success, error, dest, userData, data, platformRepos) {
     // warning for existing meta tag for csp setting
     var targetFile = path_1.default.join(path_1.default.resolve(PREPARE_DIRECTORY), INDEX_HTML);
     var target = fs_1.default.readFileSync(targetFile, {
-        encoding: "utf8"
+        encoding: "utf8",
     });
     if (target.match(/(<meta.*)(http-equiv)(.*=*.)("Content-Security-Policy"|'Content-Security-Policy')/)) {
         console.log("\nWARNING!!!!! REMOVE meta tag for csp setting in the \"index.html\"");
@@ -544,11 +544,11 @@ function replaceTemplates(dest, userData) {
             var tmplFilePath = path_1.default.join(dest, fileName);
             var destFilePath = path_1.default.join(dest, fileName.replace(/\.tmpl$/, ""));
             var template = fs_1.default.readFileSync(tmplFilePath, {
-                encoding: "utf8"
+                encoding: "utf8",
             });
             var rendered = mustache_1.default.render(template, userData);
             fs_1.default.writeFileSync(destFilePath, rendered, {
-                encoding: "utf8"
+                encoding: "utf8",
             });
             shelljs_1.default.rm(path_1.default.join(dest, fileName));
         }
