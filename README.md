@@ -62,6 +62,7 @@ $ npm install grunt-cordova-sectv
      |- cordova-plugin-toast
      |- cordova-sectv-orsay
      |- cordova-sectv-tizen
+     |- cordova-tv-webos
      `- MyApplication
     ```
 
