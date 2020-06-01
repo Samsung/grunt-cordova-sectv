@@ -1,7 +1,7 @@
 {
     "name": "grunt-cordova-sectv",
     "description": "Grunt task for build and package the cordova project with cordova-sectv-*** platforms",
-    "version": "1.4.0",
+    "version": "1.4.1",
     "author": {
         "name": "Samsung Electronics",
         "url": "http://sec.co.kr"
