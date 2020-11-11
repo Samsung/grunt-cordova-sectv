@@ -193,7 +193,7 @@ function getManualTizenConfData(platformsData){
         for (i=0; i < platformsData.length; i++) {
             if (platformsData[i].$.name === 'sectv-tizen') {
                 delete platformsData[i].$;
-                manualTizenConfData = utils.trim(js2xmlparser('platform',platformsData[i],{declaration : {include : false},attributeString : '$'}).replace(/<(\/?platform)>/igm,''));
+                manualTizenConfData = utils.trim(js2xmlparser.parse('platform',platformsData[i],{declaration : {include : false},attributeString : '$'}).replace(/<(\/?platform)>/igm,''));
             }
         }
     }
@@ -222,38 +222,43 @@ module.exports = {
         var cordovaConf = utils.getCordovaConfig();
 
         // get data from userconf.json
+        var args = process.argv;
         var userConfPath = path.join('platforms', 'userconf.json');
-        var userData = getValidTizenConfData(userConfPath);
+        var userData = {
+            "name": "",
+            "packageid": "",
+            "version": "",
+            "iconpath": "",
+            "description": "",
+            "manualConfData": "",
+            "id": ""
+        }
+
+        process.argv.forEach(function (val, index, array) {
+            var values = val.split('=');
+            var key = values[0];
+            var value = values[1];
+
+            if (key && value) {
+                if (key === '--manualConfData') {
+                    userData['manualConfData'] = val.replace('--manualConfData=', '');
+                } else {
+                    var confData = key.split('--');
+                    if (key === '--appVersion') {
+                        userData['version'] = value;
+                    } else {
+                        userData[confData[1]] = value;
+
+                    }
+                }
+            }
+        });
 
         if(userData) {
-            // exist userconf for tizen
-            confirmUseExistingData(userData, function (useExisting) {
-                if(useExisting) {
-                    // if user select useExisting: Y
-                    askUserData(cordovaConf, function (data) {
-                        userData.version = data.version;
-                        userData.manualConfData = getManualTizenConfData(cordovaConf.platform);
-                        buildProject();
-                    }, true, userData);
-                }
-                else {
-                    // if user select useExisting: N
-                    askUserData(cordovaConf, function (data) {
-                        userData = data;
-                        userData.manualConfData = getManualTizenConfData(cordovaConf.platform);
-                        buildProject();
-                    });
-                }
-            });
+            console.log({userData});
+           buildProject()
         }
-        else {
-            // not exist userconf for tizen
-            askUserData(cordovaConf, function (data) {
-                userData = data;
-                userData.manualConfData = getManualTizenConfData(cordovaConf.platform);
-                buildProject();
-            });
-        }
+
 
         function buildProject() {
             copySrcToDest() || (errorCallback && errorCallback());
@@ -273,7 +278,7 @@ module.exports = {
                 console.log('Please confirm your file : ' + targetFile);
             }
 
-            saveUserConfFile(userConfPath, userData);
+            // saveUserConfFile(userConfPath, userData);
             successCallback && successCallback();
         }
 
