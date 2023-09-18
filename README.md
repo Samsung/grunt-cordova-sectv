@@ -144,7 +144,7 @@ $ npm install grunt-cordova-sectv
         ```js
         // Fill out your 'profilePath' and 'profileName'
         'sectv-tizen': {
-            profilePath: '/home/TizenSDK/.metadata/.plugins/org.tizen.common.sign/profiles.xml',
+            profilePath: '/home/TizenSDK/tizen-studio-data/profile/profiles.xml',
             profileName: 'myprofile',
             www: 'platforms/sectv-tizen/www',
             dest: 'platforms/sectv-tizen/build'
